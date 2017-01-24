@@ -1,0 +1,160 @@
+[INFO] 2017-01-22 23:44:16,266 org.fermat.db.DatabaseFactory <init> - Opening environment in: /home/mati/Documentos/proyectors/forum_wrapper
+[INFO] 2017-01-22 23:44:17,199 org.fermat.EmbeddedJettyMain main - INIT
+[INFO] 2017-01-22 23:50:49,421 org.fermat.RequestKeyServlet doPost - json element: {"username":"mati","password":"forum1234567890"}
+[INFO] 2017-01-22 23:50:49,421 org.fermat.RequestKeyServlet doPost - username: mati
+[INFO] 2017-01-22 23:50:49,421 org.fermat.RequestKeyServlet doPost - password: forum1234567890
+[INFO] 2017-01-22 23:53:41,702 org.fermat.RequestProposalContractsNewServlet doPost - RequestProposalContractsNewServlet
+[INFO] 2017-01-22 23:53:42,662 org.fermat.RequestProposalContractsNewServlet doPost - RequestProposalContractsNewServlet
+[INFO] 2017-01-22 23:53:44,527 org.fermat.RequestProposalContractsNewServlet doPost - RequestProposalContractsNewServlet
+[INFO] 2017-01-22 23:54:02,268 org.fermat.RequestProposalContractsNewServlet doPost - RequestProposalContractsNewServlet
+[INFO] 2017-01-22 23:54:32,406 org.fermat.RequestProposalContractsNewServlet doPost - RequestProposalContractsNewServlet
+[INFO] 2017-01-22 23:54:32,406 org.fermat.RequestProposalContractsNewServlet doPost - RequestProposalContractsNewServlet
+[INFO] 2017-01-22 23:54:32,407 org.fermat.RequestProposalContractsNewServlet executeGetContracts - command: [IoP-cli, -datadir=/home/mati/IoP-data/IoP-data-1, dumpCC, 33c279a992aabe37682a1303bce6f7c8eac5ba63f44ea1e972fbab64914a02e6]
+[INFO] 2017-01-22 23:54:32,566 org.fermat.RequestTopicServlet doPost - json element: {"username":"mati","password":"forum1234567890","id":"254"}
+[INFO] 2017-01-22 23:54:32,566 org.fermat.RequestTopicServlet doPost - username: mati
+[INFO] 2017-01-22 23:54:32,566 org.fermat.RequestTopicServlet doPost - password: forum1234567890
+[INFO] 2017-01-22 23:54:32,567 org.fermat.RequestTopicServlet doPost - topic id: 254
+[INFO] 2017-01-22 23:54:33,271 org.fermat.RequestTopicServlet doPost - get topic ok!, response: <h1>Rodriiii Peladooo</h1><h2>subTitulo4</h2>
+
+<p><br></p><p></p><div>Esta es una propuesta para crear propuestas, por lo cual debo poner cosas locas acá. Asi que voy a poner lo que se me dé la gana. y voy a llenar todo esto con cosas para probar su funcionamiento es bueno</div>Start block: <div>10</div>   EndBlock: <div>10</div><br>Block reward <div>8000000</div><br>Beneficiary1: Address: <address><div>ubbZLUCrzAQKhECTweSQSdrX8b9KfiRpiB</div></address>   value: <div>8000000</div> IoPs
+[INFO] 2017-01-22 23:54:46,556 org.fermat.RequestKeyServlet doPost - json element: {"username":"matias.furszyfer","password":"forum1234567890"}
+[INFO] 2017-01-22 23:54:46,556 org.fermat.RequestKeyServlet doPost - username: matias.furszyfer
+[INFO] 2017-01-22 23:54:46,556 org.fermat.RequestKeyServlet doPost - password: forum1234567890
+[INFO] 2017-01-22 23:55:02,516 org.fermat.RequestProposalContractsNewServlet doPost - RequestProposalContractsNewServlet
+[INFO] 2017-01-22 23:55:02,517 org.fermat.RequestProposalContractsNewServlet doPost - RequestProposalContractsNewServlet
+[INFO] 2017-01-22 23:55:02,518 org.fermat.RequestProposalContractsNewServlet executeGetContracts - command: [IoP-cli, -datadir=/home/mati/IoP-data/IoP-data-1, dumpCC, 33c279a992aabe37682a1303bce6f7c8eac5ba63f44ea1e972fbab64914a02e6]
+[INFO] 2017-01-22 23:55:02,694 org.fermat.RequestTopicServlet doPost - json element: {"username":"matias.furszyfer","password":"forum1234567890","id":"254"}
+[INFO] 2017-01-22 23:55:02,695 org.fermat.RequestTopicServlet doPost - username: matias.furszyfer
+[INFO] 2017-01-22 23:55:02,695 org.fermat.RequestTopicServlet doPost - password: forum1234567890
+[INFO] 2017-01-22 23:55:02,695 org.fermat.RequestTopicServlet doPost - topic id: 254
+[INFO] 2017-01-22 23:55:02,730 org.fermat.RequestTopicServlet doPost - json element: {"username":"mati","password":"forum1234567890","id":"254"}
+[INFO] 2017-01-22 23:55:02,730 org.fermat.RequestTopicServlet doPost - username: mati
+[INFO] 2017-01-22 23:55:02,731 org.fermat.RequestTopicServlet doPost - password: forum1234567890
+[INFO] 2017-01-22 23:55:02,731 org.fermat.RequestTopicServlet doPost - topic id: 254
+[INFO] 2017-01-22 23:55:03,385 org.fermat.RequestTopicServlet doPost - get topic ok!, response: <h1>Rodriiii Peladooo</h1><h2>subTitulo4</h2>
+
+<p><br></p><p></p><div>Esta es una propuesta para crear propuestas, por lo cual debo poner cosas locas acá. Asi que voy a poner lo que se me dé la gana. y voy a llenar todo esto con cosas para probar su funcionamiento es bueno</div>Start block: <div>10</div>   EndBlock: <div>10</div><br>Block reward <div>8000000</div><br>Beneficiary1: Address: <address><div>ubbZLUCrzAQKhECTweSQSdrX8b9KfiRpiB</div></address>   value: <div>8000000</div> IoPs
+[INFO] 2017-01-22 23:55:03,423 org.fermat.RequestTopicServlet doPost - get topic ok!, response: <h1>Rodriiii Peladooo</h1><h2>subTitulo4</h2>
+
+<p><br></p><p></p><div>Esta es una propuesta para crear propuestas, por lo cual debo poner cosas locas acá. Asi que voy a poner lo que se me dé la gana. y voy a llenar todo esto con cosas para probar su funcionamiento es bueno</div>Start block: <div>10</div>   EndBlock: <div>10</div><br>Block reward <div>8000000</div><br>Beneficiary1: Address: <address><div>ubbZLUCrzAQKhECTweSQSdrX8b9KfiRpiB</div></address>   value: <div>8000000</div> IoPs
+[INFO] 2017-01-22 23:55:32,605 org.fermat.RequestProposalContractsNewServlet doPost - RequestProposalContractsNewServlet
+[INFO] 2017-01-22 23:55:32,605 org.fermat.RequestProposalContractsNewServlet doPost - RequestProposalContractsNewServlet
+[INFO] 2017-01-22 23:55:32,605 org.fermat.RequestProposalContractsNewServlet executeGetContracts - command: [IoP-cli, -datadir=/home/mati/IoP-data/IoP-data-1, dumpCC, 33c279a992aabe37682a1303bce6f7c8eac5ba63f44ea1e972fbab64914a02e6]
+[INFO] 2017-01-22 23:55:32,730 org.fermat.RequestTopicServlet doPost - json element: {"username":"matias.furszyfer","password":"forum1234567890","id":"254"}
+[INFO] 2017-01-22 23:55:32,730 org.fermat.RequestTopicServlet doPost - username: matias.furszyfer
+[INFO] 2017-01-22 23:55:32,730 org.fermat.RequestTopicServlet doPost - password: forum1234567890
+[INFO] 2017-01-22 23:55:32,731 org.fermat.RequestTopicServlet doPost - topic id: 254
+[INFO] 2017-01-22 23:55:32,748 org.fermat.RequestTopicServlet doPost - json element: {"username":"mati","password":"forum1234567890","id":"254"}
+[INFO] 2017-01-22 23:55:32,748 org.fermat.RequestTopicServlet doPost - username: mati
+[INFO] 2017-01-22 23:55:32,748 org.fermat.RequestTopicServlet doPost - password: forum1234567890
+[INFO] 2017-01-22 23:55:32,748 org.fermat.RequestTopicServlet doPost - topic id: 254
+[INFO] 2017-01-22 23:55:33,361 org.fermat.RequestTopicServlet doPost - get topic ok!, response: <h1>Rodriiii Peladooo</h1><h2>subTitulo4</h2>
+
+<p><br></p><p></p><div>Esta es una propuesta para crear propuestas, por lo cual debo poner cosas locas acá. Asi que voy a poner lo que se me dé la gana. y voy a llenar todo esto con cosas para probar su funcionamiento es bueno</div>Start block: <div>10</div>   EndBlock: <div>10</div><br>Block reward <div>8000000</div><br>Beneficiary1: Address: <address><div>ubbZLUCrzAQKhECTweSQSdrX8b9KfiRpiB</div></address>   value: <div>8000000</div> IoPs
+[INFO] 2017-01-22 23:55:33,386 org.fermat.RequestTopicServlet doPost - get topic ok!, response: <h1>Rodriiii Peladooo</h1><h2>subTitulo4</h2>
+
+<p><br></p><p></p><div>Esta es una propuesta para crear propuestas, por lo cual debo poner cosas locas acá. Asi que voy a poner lo que se me dé la gana. y voy a llenar todo esto con cosas para probar su funcionamiento es bueno</div>Start block: <div>10</div>   EndBlock: <div>10</div><br>Block reward <div>8000000</div><br>Beneficiary1: Address: <address><div>ubbZLUCrzAQKhECTweSQSdrX8b9KfiRpiB</div></address>   value: <div>8000000</div> IoPs
+[INFO] 2017-01-22 23:56:02,735 org.fermat.RequestProposalContractsNewServlet doPost - RequestProposalContractsNewServlet
+[INFO] 2017-01-22 23:56:02,736 org.fermat.RequestProposalContractsNewServlet doPost - RequestProposalContractsNewServlet
+[INFO] 2017-01-22 23:56:02,737 org.fermat.RequestProposalContractsNewServlet executeGetContracts - command: [IoP-cli, -datadir=/home/mati/IoP-data/IoP-data-1, dumpCC, 33c279a992aabe37682a1303bce6f7c8eac5ba63f44ea1e972fbab64914a02e6]
+[INFO] 2017-01-22 23:56:02,937 org.fermat.RequestTopicServlet doPost - json element: {"username":"mati","password":"forum1234567890","id":"254"}
+[INFO] 2017-01-22 23:56:02,938 org.fermat.RequestTopicServlet doPost - username: mati
+[INFO] 2017-01-22 23:56:02,938 org.fermat.RequestTopicServlet doPost - password: forum1234567890
+[INFO] 2017-01-22 23:56:02,938 org.fermat.RequestTopicServlet doPost - json element: {"username":"matias.furszyfer","password":"forum1234567890","id":"254"}
+[INFO] 2017-01-22 23:56:02,938 org.fermat.RequestTopicServlet doPost - topic id: 254
+[INFO] 2017-01-22 23:56:02,938 org.fermat.RequestTopicServlet doPost - username: matias.furszyfer
+[INFO] 2017-01-22 23:56:02,938 org.fermat.RequestTopicServlet doPost - password: forum1234567890
+[INFO] 2017-01-22 23:56:02,939 org.fermat.RequestTopicServlet doPost - topic id: 254
+[INFO] 2017-01-22 23:56:03,585 org.fermat.RequestTopicServlet doPost - get topic ok!, response: <h1>Rodriiii Peladooo</h1><h2>subTitulo4</h2>
+
+<p><br></p><p></p><div>Esta es una propuesta para crear propuestas, por lo cual debo poner cosas locas acá. Asi que voy a poner lo que se me dé la gana. y voy a llenar todo esto con cosas para probar su funcionamiento es bueno</div>Start block: <div>10</div>   EndBlock: <div>10</div><br>Block reward <div>8000000</div><br>Beneficiary1: Address: <address><div>ubbZLUCrzAQKhECTweSQSdrX8b9KfiRpiB</div></address>   value: <div>8000000</div> IoPs
+[INFO] 2017-01-22 23:56:03,604 org.fermat.RequestTopicServlet doPost - get topic ok!, response: <h1>Rodriiii Peladooo</h1><h2>subTitulo4</h2>
+
+<p><br></p><p></p><div>Esta es una propuesta para crear propuestas, por lo cual debo poner cosas locas acá. Asi que voy a poner lo que se me dé la gana. y voy a llenar todo esto con cosas para probar su funcionamiento es bueno</div>Start block: <div>10</div>   EndBlock: <div>10</div><br>Block reward <div>8000000</div><br>Beneficiary1: Address: <address><div>ubbZLUCrzAQKhECTweSQSdrX8b9KfiRpiB</div></address>   value: <div>8000000</div> IoPs
+[INFO] 2017-01-22 23:56:32,858 org.fermat.RequestProposalContractsNewServlet doPost - RequestProposalContractsNewServlet
+[INFO] 2017-01-22 23:56:32,858 org.fermat.RequestProposalContractsNewServlet executeGetContracts - command: [IoP-cli, -datadir=/home/mati/IoP-data/IoP-data-1, dumpCC, 33c279a992aabe37682a1303bce6f7c8eac5ba63f44ea1e972fbab64914a02e6]
+[INFO] 2017-01-22 23:56:32,860 org.fermat.RequestProposalContractsNewServlet doPost - RequestProposalContractsNewServlet
+[INFO] 2017-01-22 23:56:32,996 org.fermat.RequestTopicServlet doPost - json element: {"username":"mati","password":"forum1234567890","id":"254"}
+[INFO] 2017-01-22 23:56:32,996 org.fermat.RequestTopicServlet doPost - username: mati
+[INFO] 2017-01-22 23:56:32,996 org.fermat.RequestTopicServlet doPost - password: forum1234567890
+[INFO] 2017-01-22 23:56:32,996 org.fermat.RequestTopicServlet doPost - topic id: 254
+[INFO] 2017-01-22 23:56:33,004 org.fermat.RequestTopicServlet doPost - json element: {"username":"matias.furszyfer","password":"forum1234567890","id":"254"}
+[INFO] 2017-01-22 23:56:33,004 org.fermat.RequestTopicServlet doPost - username: matias.furszyfer
+[INFO] 2017-01-22 23:56:33,004 org.fermat.RequestTopicServlet doPost - password: forum1234567890
+[INFO] 2017-01-22 23:56:33,004 org.fermat.RequestTopicServlet doPost - topic id: 254
+[INFO] 2017-01-22 23:56:33,616 org.fermat.RequestTopicServlet doPost - get topic ok!, response: <h1>Rodriiii Peladooo</h1><h2>subTitulo4</h2>
+
+<p><br></p><p></p><div>Esta es una propuesta para crear propuestas, por lo cual debo poner cosas locas acá. Asi que voy a poner lo que se me dé la gana. y voy a llenar todo esto con cosas para probar su funcionamiento es bueno</div>Start block: <div>10</div>   EndBlock: <div>10</div><br>Block reward <div>8000000</div><br>Beneficiary1: Address: <address><div>ubbZLUCrzAQKhECTweSQSdrX8b9KfiRpiB</div></address>   value: <div>8000000</div> IoPs
+[INFO] 2017-01-22 23:56:33,635 org.fermat.RequestTopicServlet doPost - get topic ok!, response: <h1>Rodriiii Peladooo</h1><h2>subTitulo4</h2>
+
+<p><br></p><p></p><div>Esta es una propuesta para crear propuestas, por lo cual debo poner cosas locas acá. Asi que voy a poner lo que se me dé la gana. y voy a llenar todo esto con cosas para probar su funcionamiento es bueno</div>Start block: <div>10</div>   EndBlock: <div>10</div><br>Block reward <div>8000000</div><br>Beneficiary1: Address: <address><div>ubbZLUCrzAQKhECTweSQSdrX8b9KfiRpiB</div></address>   value: <div>8000000</div> IoPs
+[INFO] 2017-01-22 23:57:02,959 org.fermat.RequestProposalContractsNewServlet doPost - RequestProposalContractsNewServlet
+[INFO] 2017-01-22 23:57:02,968 org.fermat.RequestProposalContractsNewServlet doPost - RequestProposalContractsNewServlet
+[INFO] 2017-01-22 23:57:02,969 org.fermat.RequestProposalContractsNewServlet executeGetContracts - command: [IoP-cli, -datadir=/home/mati/IoP-data/IoP-data-1, dumpCC, 33c279a992aabe37682a1303bce6f7c8eac5ba63f44ea1e972fbab64914a02e6]
+[INFO] 2017-01-22 23:57:03,105 org.fermat.RequestTopicServlet doPost - json element: {"username":"matias.furszyfer","password":"forum1234567890","id":"254"}
+[INFO] 2017-01-22 23:57:03,105 org.fermat.RequestTopicServlet doPost - username: matias.furszyfer
+[INFO] 2017-01-22 23:57:03,105 org.fermat.RequestTopicServlet doPost - password: forum1234567890
+[INFO] 2017-01-22 23:57:03,105 org.fermat.RequestTopicServlet doPost - topic id: 254
+[INFO] 2017-01-22 23:57:03,125 org.fermat.RequestTopicServlet doPost - json element: {"username":"mati","password":"forum1234567890","id":"254"}
+[INFO] 2017-01-22 23:57:03,125 org.fermat.RequestTopicServlet doPost - username: mati
+[INFO] 2017-01-22 23:57:03,125 org.fermat.RequestTopicServlet doPost - password: forum1234567890
+[INFO] 2017-01-22 23:57:03,125 org.fermat.RequestTopicServlet doPost - topic id: 254
+[INFO] 2017-01-22 23:57:03,732 org.fermat.RequestTopicServlet doPost - get topic ok!, response: <h1>Rodriiii Peladooo</h1><h2>subTitulo4</h2>
+
+<p><br></p><p></p><div>Esta es una propuesta para crear propuestas, por lo cual debo poner cosas locas acá. Asi que voy a poner lo que se me dé la gana. y voy a llenar todo esto con cosas para probar su funcionamiento es bueno</div>Start block: <div>10</div>   EndBlock: <div>10</div><br>Block reward <div>8000000</div><br>Beneficiary1: Address: <address><div>ubbZLUCrzAQKhECTweSQSdrX8b9KfiRpiB</div></address>   value: <div>8000000</div> IoPs
+[INFO] 2017-01-22 23:57:03,746 org.fermat.RequestTopicServlet doPost - get topic ok!, response: <h1>Rodriiii Peladooo</h1><h2>subTitulo4</h2>
+
+<p><br></p><p></p><div>Esta es una propuesta para crear propuestas, por lo cual debo poner cosas locas acá. Asi que voy a poner lo que se me dé la gana. y voy a llenar todo esto con cosas para probar su funcionamiento es bueno</div>Start block: <div>10</div>   EndBlock: <div>10</div><br>Block reward <div>8000000</div><br>Beneficiary1: Address: <address><div>ubbZLUCrzAQKhECTweSQSdrX8b9KfiRpiB</div></address>   value: <div>8000000</div> IoPs
+[INFO] 2017-01-22 23:57:33,166 org.fermat.RequestProposalContractsNewServlet doPost - RequestProposalContractsNewServlet
+[INFO] 2017-01-22 23:57:33,167 org.fermat.RequestProposalContractsNewServlet executeGetContracts - command: [IoP-cli, -datadir=/home/mati/IoP-data/IoP-data-1, dumpCC, 33c279a992aabe37682a1303bce6f7c8eac5ba63f44ea1e972fbab64914a02e6]
+[INFO] 2017-01-22 23:57:33,167 org.fermat.RequestProposalContractsNewServlet doPost - RequestProposalContractsNewServlet
+[INFO] 2017-01-22 23:57:33,309 org.fermat.RequestTopicServlet doPost - json element: {"username":"mati","password":"forum1234567890","id":"254"}
+[INFO] 2017-01-22 23:57:33,309 org.fermat.RequestTopicServlet doPost - username: mati
+[INFO] 2017-01-22 23:57:33,309 org.fermat.RequestTopicServlet doPost - password: forum1234567890
+[INFO] 2017-01-22 23:57:33,309 org.fermat.RequestTopicServlet doPost - topic id: 254
+[INFO] 2017-01-22 23:57:33,314 org.fermat.RequestTopicServlet doPost - json element: {"username":"matias.furszyfer","password":"forum1234567890","id":"254"}
+[INFO] 2017-01-22 23:57:33,314 org.fermat.RequestTopicServlet doPost - username: matias.furszyfer
+[INFO] 2017-01-22 23:57:33,314 org.fermat.RequestTopicServlet doPost - password: forum1234567890
+[INFO] 2017-01-22 23:57:33,315 org.fermat.RequestTopicServlet doPost - topic id: 254
+[INFO] 2017-01-22 23:57:33,943 org.fermat.RequestTopicServlet doPost - get topic ok!, response: <h1>Rodriiii Peladooo</h1><h2>subTitulo4</h2>
+
+<p><br></p><p></p><div>Esta es una propuesta para crear propuestas, por lo cual debo poner cosas locas acá. Asi que voy a poner lo que se me dé la gana. y voy a llenar todo esto con cosas para probar su funcionamiento es bueno</div>Start block: <div>10</div>   EndBlock: <div>10</div><br>Block reward <div>8000000</div><br>Beneficiary1: Address: <address><div>ubbZLUCrzAQKhECTweSQSdrX8b9KfiRpiB</div></address>   value: <div>8000000</div> IoPs
+[INFO] 2017-01-22 23:57:33,962 org.fermat.RequestTopicServlet doPost - get topic ok!, response: <h1>Rodriiii Peladooo</h1><h2>subTitulo4</h2>
+
+<p><br></p><p></p><div>Esta es una propuesta para crear propuestas, por lo cual debo poner cosas locas acá. Asi que voy a poner lo que se me dé la gana. y voy a llenar todo esto con cosas para probar su funcionamiento es bueno</div>Start block: <div>10</div>   EndBlock: <div>10</div><br>Block reward <div>8000000</div><br>Beneficiary1: Address: <address><div>ubbZLUCrzAQKhECTweSQSdrX8b9KfiRpiB</div></address>   value: <div>8000000</div> IoPs
+[INFO] 2017-01-22 23:58:03,181 org.fermat.RequestProposalContractsNewServlet doPost - RequestProposalContractsNewServlet
+[INFO] 2017-01-22 23:58:03,192 org.fermat.RequestProposalContractsNewServlet doPost - RequestProposalContractsNewServlet
+[INFO] 2017-01-22 23:58:03,192 org.fermat.RequestProposalContractsNewServlet executeGetContracts - command: [IoP-cli, -datadir=/home/mati/IoP-data/IoP-data-1, dumpCC, 33c279a992aabe37682a1303bce6f7c8eac5ba63f44ea1e972fbab64914a02e6]
+[INFO] 2017-01-22 23:58:03,332 org.fermat.RequestTopicServlet doPost - json element: {"username":"matias.furszyfer","password":"forum1234567890","id":"254"}
+[INFO] 2017-01-22 23:58:03,332 org.fermat.RequestTopicServlet doPost - username: matias.furszyfer
+[INFO] 2017-01-22 23:58:03,332 org.fermat.RequestTopicServlet doPost - password: forum1234567890
+[INFO] 2017-01-22 23:58:03,332 org.fermat.RequestTopicServlet doPost - topic id: 254
+[INFO] 2017-01-22 23:58:03,332 org.fermat.RequestTopicServlet doPost - json element: {"username":"mati","password":"forum1234567890","id":"254"}
+[INFO] 2017-01-22 23:58:03,332 org.fermat.RequestTopicServlet doPost - username: mati
+[INFO] 2017-01-22 23:58:03,332 org.fermat.RequestTopicServlet doPost - password: forum1234567890
+[INFO] 2017-01-22 23:58:03,332 org.fermat.RequestTopicServlet doPost - topic id: 254
+[INFO] 2017-01-22 23:58:03,976 org.fermat.RequestTopicServlet doPost - get topic ok!, response: <h1>Rodriiii Peladooo</h1><h2>subTitulo4</h2>
+
+<p><br></p><p></p><div>Esta es una propuesta para crear propuestas, por lo cual debo poner cosas locas acá. Asi que voy a poner lo que se me dé la gana. y voy a llenar todo esto con cosas para probar su funcionamiento es bueno</div>Start block: <div>10</div>   EndBlock: <div>10</div><br>Block reward <div>8000000</div><br>Beneficiary1: Address: <address><div>ubbZLUCrzAQKhECTweSQSdrX8b9KfiRpiB</div></address>   value: <div>8000000</div> IoPs
+[INFO] 2017-01-22 23:58:03,988 org.fermat.RequestTopicServlet doPost - get topic ok!, response: <h1>Rodriiii Peladooo</h1><h2>subTitulo4</h2>
+
+<p><br></p><p></p><div>Esta es una propuesta para crear propuestas, por lo cual debo poner cosas locas acá. Asi que voy a poner lo que se me dé la gana. y voy a llenar todo esto con cosas para probar su funcionamiento es bueno</div>Start block: <div>10</div>   EndBlock: <div>10</div><br>Block reward <div>8000000</div><br>Beneficiary1: Address: <address><div>ubbZLUCrzAQKhECTweSQSdrX8b9KfiRpiB</div></address>   value: <div>8000000</div> IoPs
+[INFO] 2017-01-22 23:58:33,257 org.fermat.RequestProposalContractsNewServlet doPost - RequestProposalContractsNewServlet
+[INFO] 2017-01-22 23:58:33,266 org.fermat.RequestProposalContractsNewServlet doPost - RequestProposalContractsNewServlet
+[INFO] 2017-01-22 23:58:33,267 org.fermat.RequestProposalContractsNewServlet executeGetContracts - command: [IoP-cli, -datadir=/home/mati/IoP-data/IoP-data-1, dumpCC, 33c279a992aabe37682a1303bce6f7c8eac5ba63f44ea1e972fbab64914a02e6]
+[INFO] 2017-01-22 23:58:33,388 org.fermat.RequestTopicServlet doPost - json element: {"username":"matias.furszyfer","password":"forum1234567890","id":"254"}
+[INFO] 2017-01-22 23:58:33,388 org.fermat.RequestTopicServlet doPost - username: matias.furszyfer
+[INFO] 2017-01-22 23:58:33,389 org.fermat.RequestTopicServlet doPost - password: forum1234567890
+[INFO] 2017-01-22 23:58:33,389 org.fermat.RequestTopicServlet doPost - topic id: 254
+[INFO] 2017-01-22 23:58:33,424 org.fermat.RequestTopicServlet doPost - json element: {"username":"mati","password":"forum1234567890","id":"254"}
+[INFO] 2017-01-22 23:58:33,424 org.fermat.RequestTopicServlet doPost - username: mati
+[INFO] 2017-01-22 23:58:33,424 org.fermat.RequestTopicServlet doPost - password: forum1234567890
+[INFO] 2017-01-22 23:58:33,424 org.fermat.RequestTopicServlet doPost - topic id: 254
+[INFO] 2017-01-22 23:58:34,032 org.fermat.RequestTopicServlet doPost - get topic ok!, response: <h1>Rodriiii Peladooo</h1><h2>subTitulo4</h2>
+
+<p><br></p><p></p><div>Esta es una propuesta para crear propuestas, por lo cual debo poner cosas locas acá. Asi que voy a poner lo que se me dé la gana. y voy a llenar todo esto con cosas para probar su funcionamiento es bueno</div>Start block: <div>10</div>   EndBlock: <div>10</div><br>Block reward <div>8000000</div><br>Beneficiary1: Address: <address><div>ubbZLUCrzAQKhECTweSQSdrX8b9KfiRpiB</div></address>   value: <div>8000000</div> IoPs
+[INFO] 2017-01-22 23:58:34,058 org.fermat.RequestTopicServlet doPost - get topic ok!, response: <h1>Rodriiii Peladooo</h1><h2>subTitulo4</h2>
+
+<p><br></p><p></p><div>Esta es una propuesta para crear propuestas, por lo cual debo poner cosas locas acá. Asi que voy a poner lo que se me dé la gana. y voy a llenar todo esto con cosas para probar su funcionamiento es bueno</div>Start block: <div>10</div>   EndBlock: <div>10</div><br>Block reward <div>8000000</div><br>Beneficiary1: Address: <address><div>ubbZLUCrzAQKhECTweSQSdrX8b9KfiRpiB</div></address>   value: <div>8000000</div> IoPs
+[INFO] 2017-01-22 23:59:03,467 org.fermat.RequestProposalContractsNewServlet doPost - RequestProposalContractsNewServlet
+[INFO] 2017-01-22 23:59:33,660 org.fermat.RequestProposalContractsNewServlet doPost - RequestProposalContractsNewServlet
