@@ -11,6 +11,7 @@ import org.fermat.conf.ServerConf;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -19,41 +20,10 @@ import java.util.concurrent.TimeUnit;
 
 public class EmbeddedJettyMain {
 
-	private static ScheduledExecutorService executor;
 
 	public static void main(String[] args) throws Exception {
 
-		int port = -1;
-		String iopDir = null;
-
-		for (int i = 0; i < args.length; i=i+2) {
-
-			if (args[i].equals("-port")){
-				port = Integer.parseInt(args[i+1]);
-			}
-
-			if (args[i].equals("datadir")){
-				iopDir = args[i+1];
-			}
-
-		}
-
-		if (port==-1){
-			port = 7070;
-		}
-
-		if (iopDir!=null && !iopDir.equals("")){
-			Context.setIopCoreDir(iopDir);
-		}
-
-//		executor = Executors.newSingleThreadScheduledExecutor();
-//		executor.scheduleAtFixedRate(new Runnable() {
-//			@Override
-//			public void run() {
-//				executeGenerate();
-//			}
-//		},5,5, TimeUnit.MINUTES);
-
+		// logger
 
 		ServerConf serverConf = new ServerConf();
 		serverConf.configLogger();
@@ -65,9 +35,69 @@ public class EmbeddedJettyMain {
 
 		logger.info("INIT");
 
+
+
+		// args
+
+		int port = -1;
+		String iopDir = null;
+
+		for (int i = 0; i < args.length; i=i+2) {
+
+			if (args[i].equals("-port")){
+				port = Integer.parseInt(args[i+1]);
+			}
+
+			if (args[i].equals("-datadir")){
+				iopDir = args[i+1];
+			}
+
+			if (args[i].equals("-url")){
+				Context.setForumUrl(args[i+1]);
+			}
+
+			if (args[i].equals("-apikey")){
+				Context.setApiKey(args[i+1]);
+			}
+
+			if (args[i].equals("-admin")){
+				Context.setAdminUsername(args[i+1]);
+			}
+
+		}
+
+		if (port==-1){
+			port = 7070;
+		}
+
+		if (iopDir!=null && !iopDir.equals("")){
+			logger.info("IoP datadir = "+iopDir);
+			Context.setIopCoreDir(iopDir);
+		}
+
+		try{
+			URL url = new URL(Context.getForumUrl());
+		}catch (Exception e){
+			logger.error("bad url forum, "+Context.getForumUrl());
+			System.exit(1);
+		}
+
+//		executor = Executors.newSingleThreadScheduledExecutor();
+//		executor.scheduleAtFixedRate(new Runnable() {
+//			@Override
+//			public void run() {
+//				executeGenerate();
+//			}
+//		},5,5, TimeUnit.MINUTES);
+
+
+
+
+
 		Server server = new Server(port);
         ServletContextHandler handler = new ServletContextHandler(server, "/fermat");
 		handler.addServlet(ExampleServlet.class, "/");
+		handler.addServlet(ExampleServlet.class, "/admin_notif");
 		handler.addServlet(RegisterUserServlet.class, "/register");
 		handler.addServlet(RequestKeyServlet.class,"/requestkey");
 		handler.addServlet(RequestTopicServlet.class,"/getTopic");
@@ -109,7 +139,6 @@ public class EmbeddedJettyMain {
 		}
 
 		System.out.println(output.toString());
-
 
 	}
 

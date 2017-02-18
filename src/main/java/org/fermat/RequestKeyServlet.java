@@ -27,7 +27,11 @@ public class RequestKeyServlet extends HttpServlet {
 	private ForumClient forumClient;
 
 	public RequestKeyServlet() {
-		this.forumClient = new ForumClientDiscourseImp();
+		this.forumClient = new ForumClientDiscourseImp(
+				Context.getForumUrl(),
+				Context.getApiKey(),
+				Context.getAdminUsername()
+		);
 	}
 
 	@Override
@@ -42,6 +46,12 @@ public class RequestKeyServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		//super.doPost(req, resp);
 
+        String ipAddress = req.getHeader("X-FORWARDED-FOR");
+        if (ipAddress == null) {
+            ipAddress = req.getRemoteAddr();
+        }
+
+        logger.info("RequestKeyServlet, client ip: "+ipAddress);
 
 		StringBuffer jb = new StringBuffer();
 		String line = null;
@@ -58,12 +68,6 @@ public class RequestKeyServlet extends HttpServlet {
 		String password = jsonElement.get("password").getAsString();
 
 		JsonObject responseObj = new JsonObject();
-
-
-
-
-
-		logger.info("json element: "+jsonElement);
 
 		logger.info("username: "+userName);
 //		logger.info("email: "+email);
@@ -103,6 +107,7 @@ public class RequestKeyServlet extends HttpServlet {
 							responseObj.addProperty(ResponseMessageConstants.USER_ERROR_STR, e.getMessage() + ", please verify your mail account");
 							resp.setStatus(HttpStatus.FORBIDDEN_403);
 						} catch (UserNotFoundException e) {
+							logger.error("Data: "+userName+" "+password,e);
 							responseObj.addProperty(ResponseMessageConstants.USER_ERROR_STR, "User not found");
 							resp.setStatus(HttpStatus.FORBIDDEN_403);
 						} catch (Exception e) {

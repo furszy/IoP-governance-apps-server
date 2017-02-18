@@ -14,4 +14,7 @@ public class ResponseMessageConstants {
     public static final String BEST_CHAIN_HEIGHT_HASH = "best_hash";
     // topic servlet
     public static final String TOPIC_POST = "topic_post";
+
+    public static final String ADMIN_NOTIFICATION = "admin_text";
+    public static final String ADMIN_NOTIFICATION_APP_MIN_VERSION = "app_min";
 }

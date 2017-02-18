@@ -26,7 +26,11 @@ public class RegisterUserServlet extends HttpServlet {
 	private ForumClient forumClient;
 
 	public RegisterUserServlet() {
-		this.forumClient = new ForumClientDiscourseImp();
+		this.forumClient = new ForumClientDiscourseImp(
+		        Context.getForumUrl(),
+                Context.getApiKey(),
+                Context.getAdminUsername()
+        );
 	}
 
 	@Override
@@ -41,7 +45,12 @@ public class RegisterUserServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		//super.doPost(req, resp);
 
-        logger.info("Register user");
+        String ipAddress = req.getHeader("X-FORWARDED-FOR");
+        if (ipAddress == null) {
+            ipAddress = req.getRemoteAddr();
+        }
+
+        logger.info("Register user, client ip: "+ipAddress);
 
         StringBuffer jb = new StringBuffer();
         String line = null;
@@ -58,7 +67,7 @@ public class RegisterUserServlet extends HttpServlet {
         String password = jsonElement.get("password").getAsString();
         String email = jsonElement.get("email").getAsString();
 
-       logger.info("json element: "+jsonElement);
+//       logger.info("json element: "+jsonElement);
 
 		System.out.println("username: "+userName);
 		System.out.println("email: "+email);

@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.jetty.http.HttpStatus;
 import org.fermat.db.IdentityData;
 import org.fermat.forum.*;
+import org.fermat.notifications.AdminNotificationUpdate;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -22,7 +23,11 @@ public class RequestTopicServlet extends HttpServlet {
 	private ForumClient forumClient;
 
 	public RequestTopicServlet() {
-		this.forumClient = new ForumClientDiscourseImp();
+		this.forumClient = new ForumClientDiscourseImp(
+				Context.getForumUrl(),
+				Context.getApiKey(),
+				Context.getAdminUsername()
+		);
 	}
 
 	@Override
@@ -37,6 +42,14 @@ public class RequestTopicServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		//super.doPost(req, resp);
 
+		String ipAddress = req.getHeader("X-FORWARDED-FOR");
+		if (ipAddress == null) {
+			ipAddress = req.getRemoteAddr();
+		}
+
+		JsonObject responseObj = new JsonObject();
+
+		logger.info("RequestTopicServlet, client ip: "+ipAddress);
 
 		StringBuffer jb = new StringBuffer();
 		String line = null;
@@ -53,60 +66,59 @@ public class RequestTopicServlet extends HttpServlet {
 		String password = jsonElement.get("password").getAsString();
 		int topicId = jsonElement.get("id").getAsInt();
 
-		JsonObject responseObj = new JsonObject();
-
-
-
-
-
-		logger.info("json element: "+jsonElement);
 
 		logger.info("username: "+userName);
 //		logger.info("email: "+email);
 		logger.info("password: "+password);
 		logger.info("topic id: "+topicId);
 
-
-		IdentityData identityData = Context.getDao().getIdentity(userName);
-		if (identityData==null){
-			if (forumClient.loginUser(userName,password))
-				identityData = new IdentityData(userName,password,null,null);
-		}
-
-		if (identityData!=null) {
-
-			if (!identityData.getPassword().equals(password)) {
-				responseObj.addProperty(ResponseMessageConstants.USER_ERROR_STR, "Invalid password");
-				resp.setStatus(HttpStatus.FORBIDDEN_403);
-			} else {
-
-				if (userName != null && password != null) {
+		if (topicId<=1){
+			responseObj.addProperty(ResponseMessageConstants.USER_ERROR_STR, "Invalid forum id, value: "+topicId);
+			resp.setStatus(HttpStatus.FORBIDDEN_403);
+		}else {
 
 
-					String topic = null;
-					try {
-						topic = forumClient.getTopic(topicId);
-						if (topic != null) {
-							logger.info("get topic ok!, response: "+topic);
-							resp.setStatus(HttpStatus.OK_200);
-							responseObj.addProperty(ResponseMessageConstants.TOPIC_POST, topic);
-						} else {
+			IdentityData identityData = Context.getDao().getIdentity(userName);
+			if (identityData == null) {
+				if (forumClient.loginUser(userName, password))
+					identityData = new IdentityData(userName, password, null, null);
+			}
+
+			if (identityData != null) {
+
+				if (!identityData.getPassword().equals(password)) {
+					responseObj.addProperty(ResponseMessageConstants.USER_ERROR_STR, "Invalid password");
+					resp.setStatus(HttpStatus.FORBIDDEN_403);
+				} else {
+
+					if (userName != null && password != null) {
+
+
+						String topic = null;
+						try {
+							topic = forumClient.getTopic(topicId);
+							if (topic != null) {
+								logger.info("get topic ok!, response: " + topic);
+								resp.setStatus(HttpStatus.OK_200);
+								responseObj.addProperty(ResponseMessageConstants.TOPIC_POST, topic);
+							} else {
+								resp.sendError(HttpStatus.INTERNAL_SERVER_ERROR_500);
+							}
+
+						} catch (Exception e) {
+							e.printStackTrace();
+							logger.error(e);
 							resp.sendError(HttpStatus.INTERNAL_SERVER_ERROR_500);
 						}
-
-					} catch (Exception e) {
-						e.printStackTrace();
-						logger.error(e);
-						resp.sendError(HttpStatus.INTERNAL_SERVER_ERROR_500);
+					} else {
+						resp.setStatus(HttpStatus.FORBIDDEN_403);
+						responseObj.addProperty(ResponseMessageConstants.USER_ERROR_STR, "Username & password null");
 					}
-				} else {
-					resp.setStatus(HttpStatus.FORBIDDEN_403);
-					responseObj.addProperty(ResponseMessageConstants.USER_ERROR_STR, "Username & password null");
 				}
+			} else {
+				responseObj.addProperty(ResponseMessageConstants.USER_ERROR_STR, "Invalid user");
+				resp.setStatus(HttpStatus.FORBIDDEN_403);
 			}
-		}else {
-			responseObj.addProperty(ResponseMessageConstants.USER_ERROR_STR, "Invalid user");
-			resp.setStatus(HttpStatus.FORBIDDEN_403);
 		}
 		PrintWriter pWriter = resp.getWriter();
 		pWriter.println(responseObj.toString());

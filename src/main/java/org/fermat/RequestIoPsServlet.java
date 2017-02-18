@@ -44,7 +44,7 @@ public class RequestIoPsServlet extends HttpServlet {
 
         Process p;
         try {//IoP-qt -datadir="/home/mati/IoP-data/IoP-data-1"
-            p = Runtime.getRuntime().exec(new String[]{"IoP-cli","-datadir="+file.getAbsolutePath(),"sendtoaddress",address, String.valueOf(1001)});
+            p = Runtime.getRuntime().exec(new String[]{"IoP-cli","-datadir="+file.getAbsolutePath(),"sendtoaddress",address, String.valueOf(1005)});
             p.waitFor();
             BufferedReader reader =
                     new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -64,15 +64,4 @@ public class RequestIoPsServlet extends HttpServlet {
 
     }
 
-
-    public static String convertInputStreamToString(InputStream inputStream) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
-        String line = "";
-        String result = "";
-        while((line = bufferedReader.readLine()) != null)
-            result += line;
-
-        inputStream.close();
-        return result;
-    }
 }

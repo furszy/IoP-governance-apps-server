@@ -36,9 +36,18 @@ public class ForumClientDiscourseImp implements ForumClient {
 
 //    private boolean isActive;
 
-    public ForumClientDiscourseImp() {
+    public ForumClientDiscourseImp(String forumUrl,String apiKey,String adminUsername) {
         forumProfile = null;// aca iria el profile del admin.  forumConfigurations.getForumUser();
-        init();
+        init(forumUrl,apiKey,adminUsername);
+    }
+
+    private void init(String forumUrl,String apiKey,String adminUsername){
+        client = new DiscourseApiClient(
+                DiscouseApiConstants.FORUM_URL,//args[0] // api_url  : e.g. http://your_domain.com
+                DiscouseApiConstants.API_KEY, //, args[1] // api_key : you get from discourse admin
+                DiscouseApiConstants.API_USER_BEHALF_OF //, args[2] // api_username : you make calls on behalf of
+        );
+
     }
 
     private void init(){
