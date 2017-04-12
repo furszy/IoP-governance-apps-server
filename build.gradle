@@ -35,6 +35,12 @@ dependencies {
     // Berkeley db
     compile files('libs/je-7.0.6.jar')
 
+    compile project(':redthoot-java')
+
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
+
     compile group: 'log4j', name: 'log4j', version: '1.2.17'
+
+    compile project(":iopj")
 
 }
