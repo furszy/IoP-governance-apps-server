@@ -133,6 +133,19 @@ public class ForumClientDiscourseImp implements ForumClient {
             return false;
     }
 
+    @Override
+    public boolean loginUser(String userName, String password,String apiKey) {
+        Map<String,String> parameters;
+        parameters = new HashMap<String, String>();
+        parameters.put("password", ""+password);
+        parameters.put("username", userName);
+        ResponseModel responseModel = client.loginUser(parameters,apiKey);
+        if (responseModel.meta.code>201){
+            return true;
+        }else
+            return false;
+    }
+
     public ForumProfile getUser(String username) throws UserNotFoundException {
 //        LOG.debug("getUser");
         ForumProfile forumProfile = null;

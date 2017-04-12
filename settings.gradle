@@ -1,2 +1,4 @@
 rootProject.name = 'forum_wrapper'
+include 'iopj'
+include 'redthoot-java'
 

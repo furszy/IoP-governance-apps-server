@@ -7,15 +7,26 @@ import org.apache.log4j.PatternLayout;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.fermat.conf.ServerConf;
+import org.fermat.extra_data.ExtraData;
+import org.fermat.extra_data.MarketCapApiClient;
+import org.fermat.internal_forum.endpoints.*;
+import org.fermat.push_notifications.Firebase;
+import org.fermat.push_notifications.SuscriptionType;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import static org.fermat.Context.EXTRA_DATA_FILENAME;
 
 
 public class EmbeddedJettyMain {
@@ -33,9 +44,7 @@ public class EmbeddedJettyMain {
 		// creates a custom logger and log messages
 		Logger logger = Logger.getLogger(EmbeddedJettyMain.class);
 
-		logger.info("INIT");
-
-
+		logger.info("INIT args: "+ Arrays.toString(args));
 
 		// args
 
@@ -82,16 +91,32 @@ public class EmbeddedJettyMain {
 			System.exit(1);
 		}
 
-//		executor = Executors.newSingleThreadScheduledExecutor();
-//		executor.scheduleAtFixedRate(new Runnable() {
-//			@Override
-//			public void run() {
-//				executeGenerate();
-//			}
-//		},5,5, TimeUnit.MINUTES);
+		ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
+		executor.scheduleAtFixedRate(new Runnable() {
+			@Override
+			public void run() {
+				ExtraData extraData = Context.getExtraData();
+				BigDecimal bigDecimal = null;
+				try {
+					bigDecimal = new MarketCapApiClient().getIoPPrice();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				extraData = new ExtraData(extraData.getMonthRateIoP().add(bigDecimal).divide(new BigDecimal(2),RoundingMode.CEILING));
+				extraData.saveExtraData(new File(EXTRA_DATA_FILENAME));
 
-
-
+			}
+		},1,12, TimeUnit.HOURS);
+		executor.scheduleAtFixedRate(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Context.getInternalDb().backupDb();
+				} catch (IOException e) {
+					logger.error("Cant backup database",e);
+				}
+			}
+		},1,12,TimeUnit.HOURS);
 
 
 		Server server = new Server(port);
@@ -101,10 +126,20 @@ public class EmbeddedJettyMain {
 		handler.addServlet(RegisterUserServlet.class, "/register");
 		handler.addServlet(RequestKeyServlet.class,"/requestkey");
 		handler.addServlet(RequestTopicServlet.class,"/getTopic");
-		handler.addServlet(RequestProposalContractsServlet.class,"/requestproposals");
-		handler.addServlet(RequestProposalContractsFullTxServlet.class,"/requestproposalsfulltx");
         handler.addServlet(RequestProposalContractsNewServlet.class,"/requestproposalsnew");
 		handler.addServlet(RequestIoPsServlet.class,"/requestcoins");
+		handler.addServlet(RequestIopRateUsdServlet.class,"/request_iop_usd_rate_month");
+
+		// forum servlets
+		handler.addServlet(RequestRegisterProfileServlet.class,"/profile");
+		handler.addServlet(RequestCreateTopicServlet.class,"/create_topic");
+		handler.addServlet(RequestCreatePostServlet.class,"/create_post");
+		handler.addServlet(org.fermat.internal_forum.endpoints.RequestTopicServlet.class,"/topic");
+		handler.addServlet(RequestTopicsServlet.class,"/topics");
+		handler.addServlet(RequestCCServlet.class,"/request_cc");
+		handler.addServlet(RequestCommentsServlet.class,"/comments");
+		handler.addServlet(RegisterPushIdServlet.class,"/reg_id");
+		handler.addServlet(SubscribePushTopicServlet.class,"/subcribe");
 
 		server.start();
 

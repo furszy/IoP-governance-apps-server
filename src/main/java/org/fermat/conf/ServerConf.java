@@ -8,7 +8,6 @@ import org.apache.log4j.*;
 public class ServerConf {
 
 
-
     public void configLogger(){
         // creates pattern layout
         PatternLayout layout = new PatternLayout();

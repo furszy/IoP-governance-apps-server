@@ -49,7 +49,7 @@ public class RequestTopicServlet extends HttpServlet {
 
 		JsonObject responseObj = new JsonObject();
 
-		logger.info("RequestTopicServlet, client ip: "+ipAddress);
+		logger.info("RequestCreateTopicServlet, client ip: "+ipAddress);
 
 		StringBuffer jb = new StringBuffer();
 		String line = null;

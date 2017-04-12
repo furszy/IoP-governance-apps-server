@@ -1,11 +1,18 @@
 import com.google.gson.JsonArray;
+import org.fermat.Context;
+import org.fermat.forum.ForumClient;
+import org.fermat.forum.ForumClientDiscourseImp;
+import org.fermat.forum.discourse.DiscourseApiClient;
+import org.fermat.forum.discourse.DiscouseApiConstants;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +57,46 @@ public class IoPTests {
         System.out.println("##############");
         System.out.println(transactions.toString());
 //        return output.toString();
+    }
+
+
+    @Test
+    public void profileServerConnectionTest(){
+
+        try {
+            Socket socket = new Socket("localhost",16987);
+
+            if (socket.isConnected()){
+                System.out.println("Se conectó");
+            }else {
+                System.out.println("No se conectó");
+            }
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
 
     }
+
+    @Test
+    public void getTopic(){
+
+        try{
+            ForumClient forumClient;
+            forumClient = new ForumClientDiscourseImp(
+                    Context.getForumUrl(),
+                    Context.getApiKey(),
+                    Context.getAdminUsername()
+            );
+            String topic = forumClient.getTopic(869);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
 
 }

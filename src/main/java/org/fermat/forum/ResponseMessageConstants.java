@@ -14,6 +14,15 @@ public class ResponseMessageConstants {
     public static final String BEST_CHAIN_HEIGHT_HASH = "best_hash";
     // topic servlet
     public static final String TOPIC_POST = "topic_post";
+    // iop rate in usd
+    public static final String IOP_RATE_USD = "iop_rate";
+
+    public static final String INVALID_PARAMETER = "inv_param";
+    public static final String AUTH_FAIL = "auth_fail";
+    public static final String ERROR_DETAIL = "error_detail";
+
+    public static final String POST_ID = "post_id";
+    public static final String TOPIC = "topic";
 
     public static final String ADMIN_NOTIFICATION = "admin_text";
     public static final String ADMIN_NOTIFICATION_APP_MIN_VERSION = "app_min";

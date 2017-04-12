@@ -572,6 +572,46 @@ public class DiscourseApiClient {
 		
 		return responseModel;
 	}
+
+	public ResponseModel loginUser(Map<String, String> parameters,String userApikey) {
+		// SYNCHRONOUS function
+		final String TAG = "loginUser";
+		// this.post('session', { 'login': username, 'password': password },
+
+		if (!parameters.containsKey("username")) throw new IllegalArgumentException("no username param in login");
+		if (!parameters.containsKey("password")) throw new IllegalArgumentException("no password param in login");
+
+		MyWebClient webClient = new MyWebClient(this.api_url);
+		if (parameters==null) parameters = new HashMap<String, String>();
+		//if (!TextUtils.isEmpty(this.api_key)) parameters.put("api_key", this.api_key);
+		//if (!TextUtils.isEmpty(this.api_username)) parameters.put("api_username", this.api_username);
+
+
+		String methodName = "";
+		methodName += "/session";
+		methodName = webClient.enrichMethodName(methodName, userApikey, parameters.get("username"));// append api_key only
+
+		//responseListener.onBegin("BEGIN"+"|"+TAG+"| methodName:"+methodName );
+
+		String responseStr = webClient.post(methodName, parameters);
+		ResponseModel responseModel = new ResponseModel();
+		responseModel.meta.code = webClient.getHttpResponseCode();
+		responseModel.data = responseStr;
+		/*if (responseModel.meta.code<=201) { // success
+			responseListener.onComplete_wModel(responseModel);
+		}
+		else {// error occured!
+			responseModel.meta.errorType = "general";
+			responseModel.meta.errorDetail = responseStr;
+			responseListener.onError_wMeta(responseModel.meta);
+		}*/
+		if (responseModel.meta.code>201) {// error occured!
+			responseModel.meta.errorType = "general";
+			responseModel.meta.errorDetail = responseStr;
+		}
+
+		return responseModel;
+	}
 	
 	/**
 	 * logoutUser
@@ -754,7 +794,7 @@ https://github.com/discourse/discourse/blob/master/lib/post_creator.rb
   #   acting_user             - The user performing the action might be different than the user
   #                             who is the post "author." For example when copying posts to a new
   #                             topic.
-  #   created_at              - Post creation time (optional)
+  #   created_at              - Topic creation time (optional)
   #   auto_track              - Automatically track this topic if needed (default true)
   #
   #   When replying to a topic:
@@ -763,11 +803,11 @@ https://github.com/discourse/discourse/blob/master/lib/post_creator.rb
   #
   #   When creating a topic:
   #     title                 - New topic title
-  #     archetype             - Topic archetype
+  #     archetype             - Post archetype
   #     category              - Category to assign to topic
   #     target_usernames      - comma delimited list of usernames for membership (private message)
   #     target_group_names    - comma delimited list of groups for membership (private message)
-  #     meta_data             - Topic meta data hash
+  #     meta_data             - Post meta data hash
   #     cooking_options       - Options for rendering the text
   #
 	 */

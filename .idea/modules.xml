@@ -5,6 +5,10 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/forum_wrapper.iml" filepath="$PROJECT_DIR$/.idea/modules/forum_wrapper.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/forum_wrapper_main.iml" filepath="$PROJECT_DIR$/.idea/modules/forum_wrapper_main.iml" group="forum_wrapper" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/forum_wrapper_test.iml" filepath="$PROJECT_DIR$/.idea/modules/forum_wrapper_test.iml" group="forum_wrapper" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/iopj/iopj.iml" filepath="$PROJECT_DIR$/.idea/modules/iopj/iopj.iml" group="iopj" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/redthoot-java/redthoot-java.iml" filepath="$PROJECT_DIR$/.idea/modules/redthoot-java/redthoot-java.iml" group="redthoot-java" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/redthoot-java/redthoot-java_main.iml" filepath="$PROJECT_DIR$/.idea/modules/redthoot-java/redthoot-java_main.iml" group="redthoot-java" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/redthoot-java/redthoot-java_test.iml" filepath="$PROJECT_DIR$/.idea/modules/redthoot-java/redthoot-java_test.iml" group="redthoot-java" />
     </modules>
   </component>
 </project>

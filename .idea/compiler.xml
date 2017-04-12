@@ -21,6 +21,8 @@
     <bytecodeTargetLevel>
       <module name="forum_wrapper_main" target="1.8" />
       <module name="forum_wrapper_test" target="1.8" />
+      <module name="redthoot-java_main" target="1.8" />
+      <module name="redthoot-java_test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -115,8 +115,40 @@ public class RequestKeyServlet extends HttpServlet {
 							logger.error(e);
 						}
 					}else {
-						resp.setStatus(HttpStatus.OK_200);
-						responseObj.addProperty(ResponseMessageConstants.API_KEY, identityData.getApiKey());
+						// here i check if the key that i had is fine
+						logger.info("check login with user apikey");
+						if(!forumClient.loginUser(userName,password,identityData.getApiKey())){
+							logger.info("check login with user fail");
+							String apiKey = null;
+							try {
+								apiKey = forumClient.requestKey(userName, password);
+								if (apiKey != null) {
+									identityData.setApiKey(apiKey);
+									Context.getDao().saveIdentity(identityData);
+
+									resp.setStatus(HttpStatus.OK_200);
+									responseObj.addProperty(ResponseMessageConstants.API_KEY, apiKey);
+								} else {
+									resp.sendError(HttpStatus.INTERNAL_SERVER_ERROR_500);
+								}
+
+							} catch (UserNotActiveException e) {
+								responseObj.addProperty(ResponseMessageConstants.USER_ERROR_STR, e.getMessage() + ", please verify your mail account");
+								resp.setStatus(HttpStatus.FORBIDDEN_403);
+							} catch (UserNotFoundException e) {
+								logger.error("Data: "+userName+" "+password,e);
+								responseObj.addProperty(ResponseMessageConstants.USER_ERROR_STR, "User not found");
+								resp.setStatus(HttpStatus.FORBIDDEN_403);
+							} catch (Exception e) {
+								e.printStackTrace();
+								logger.error(e);
+							}
+
+						}else {
+							logger.info("check login with user good");
+							resp.setStatus(HttpStatus.OK_200);
+							responseObj.addProperty(ResponseMessageConstants.API_KEY, identityData.getApiKey());
+						}
 					}
 				} else {
 					responseObj.addProperty(ResponseMessageConstants.USER_ERROR_STR, "Username & password null");
@@ -128,6 +160,5 @@ public class RequestKeyServlet extends HttpServlet {
 		}
 		PrintWriter pWriter = resp.getWriter();
 		pWriter.println(responseObj.toString());
-
 	}
 }

@@ -18,5 +18,7 @@ public interface ForumClient {
 
     boolean loginUser(String userName, String password);
 
+    boolean loginUser(String userName, String password,String apiKey);
+
     String getTopic(int topicId) throws Exception;
 }
