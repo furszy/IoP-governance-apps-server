@@ -10,6 +10,7 @@ import org.fermat.conf.ServerConf;
 import org.fermat.extra_data.ExtraData;
 import org.fermat.extra_data.MarketCapApiClient;
 import org.fermat.internal_forum.endpoints.*;
+import org.fermat.internal_forum.model.Profile;
 import org.fermat.push_notifications.Firebase;
 import org.fermat.push_notifications.SuscriptionType;
 
@@ -102,7 +103,8 @@ public class EmbeddedJettyMain {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				extraData = new ExtraData(extraData.getMonthRateIoP().add(bigDecimal).divide(new BigDecimal(2),RoundingMode.CEILING));
+				extraData = Context.getExtraData();
+				extraData.setMonthRateIoP(extraData.getMonthRateIoP().add(bigDecimal).divide(new BigDecimal(2),RoundingMode.CEILING));
 				extraData.saveExtraData(new File(EXTRA_DATA_FILENAME));
 
 			}
@@ -118,6 +120,8 @@ public class EmbeddedJettyMain {
 			}
 		},1,12,TimeUnit.HOURS);
 
+		// todo: hacer el profile del server y validar los mensajes de ambos lados..
+//		Profile profile =
 
 		Server server = new Server(port);
         ServletContextHandler handler = new ServletContextHandler(server, "/fermat");
@@ -140,6 +144,7 @@ public class EmbeddedJettyMain {
 		handler.addServlet(RequestCommentsServlet.class,"/comments");
 		handler.addServlet(RegisterPushIdServlet.class,"/reg_id");
 		handler.addServlet(SubscribePushTopicServlet.class,"/subcribe");
+		handler.addServlet(RequestUpdateProfileServlet.class,"/profile_update");
 
 		server.start();
 
@@ -174,7 +179,8 @@ public class EmbeddedJettyMain {
 		}
 
 		System.out.println(output.toString());
-
 	}
+
+
 
 }

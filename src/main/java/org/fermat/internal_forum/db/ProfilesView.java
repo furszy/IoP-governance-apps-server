@@ -16,8 +16,11 @@ public class ProfilesView {
     /** public key -> profile */
     private StoredSortedMap<String,Profile> profilesMap;
 
+    private InternalDatabaseFactory db;
+
     public ProfilesView(InternalDatabaseFactory databaseFactory) {
 
+        this.db = databaseFactory;
         ClassCatalog classCatalog = databaseFactory.getProfilesDbCatalog();
 
         EntryBinding<String> identityKeyBinding = new SerialBinding<>(classCatalog, String.class);
@@ -37,5 +40,9 @@ public class ProfilesView {
 
     public final StoredEntrySet getProfilesEntrySet(){
         return (StoredEntrySet) profilesMap.entrySet();
+    }
+
+    public InternalDatabaseFactory getDatabaseFactory() {
+        return db;
     }
 }

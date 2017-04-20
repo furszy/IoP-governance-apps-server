@@ -53,7 +53,7 @@ public class Context {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            extraData = new ExtraData(bigDecimal);
+            extraData = new ExtraData(bigDecimal,1);
             extraData.saveExtraData(new File(EXTRA_DATA_FILENAME));
         }
     }

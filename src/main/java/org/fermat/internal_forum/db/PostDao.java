@@ -70,7 +70,7 @@ public class PostDao {
                 if (topic.getPubTime()>timeInMillis) {
                     topics.add(topic);
                 }
-                logger.info("object: " +topic.toString());
+//                logger.info("object: " +topic.toString());
             }
             i--;
         }while (i>1 && topics.size() < maxAmount);
@@ -134,44 +134,47 @@ public class PostDao {
         }
     }
 
-    public synchronized long savePost(Post post) throws CantSavePostException{
-//        TransactionRunner transactionRunner = new TransactionRunner(databaseFactory.getEnvironment());
+    public synchronized long savePost(Post post) throws CantSavePostException, TopicNotFounException {
         post.setPubTime(System.currentTimeMillis());
-        Topic topic = postsView.getTopic(post.getTopicId());
-        List<Post> posts = topic.getPosts();
         int id = 0;
-        if (posts!=null){
-            id = posts.size();
-        }
-        post.setId(id);
-        topic.addPost(post);
-        try {
-            EntryBinding<PostKey> keyBinding = new SerialBinding<>(databaseFactory.getClassCatalog(), PostKey.class);
-            EntryBinding<Topic> dataBinding = new SerialBinding<>(databaseFactory.getClassCatalog(),Topic.class);
+        Topic topic = postsView.getTopic(post.getTopicId());
+        if (topic!=null) {
+            List<Post> posts = topic.getPosts();
+            if (posts != null) {
+                id = posts.size();
+            }
+            post.setId(id);
+            topic.addPost(post);
+            try {
+                EntryBinding<PostKey> keyBinding = new SerialBinding<>(databaseFactory.getClassCatalog(), PostKey.class);
+                EntryBinding<Topic> dataBinding = new SerialBinding<>(databaseFactory.getClassCatalog(), Topic.class);
 
-            DatabaseEntry theKey = new DatabaseEntry();
-            DatabaseEntry theData = new DatabaseEntry();
+                DatabaseEntry theKey = new DatabaseEntry();
+                DatabaseEntry theData = new DatabaseEntry();
 
-            keyBinding.objectToEntry(new PostKey(topic.getId()),theKey);
-            dataBinding.objectToEntry(topic,theData);
+                keyBinding.objectToEntry(new PostKey(topic.getId()), theKey);
+                dataBinding.objectToEntry(topic, theData);
 
-            WriteOptions wo = new WriteOptions();
-            // This sets the TTL using day units. Another variation
-            // of setTTL() exists that accepts a TimeUnit class instance.
-            wo.setTTL(5);
-            // If the record currently exists, update the TTL value
-            wo.setUpdateTTL(true);
-            postsView.getDatabaseFactory().getForumDb().put(
-                    null,             // Transaction handle.
-                    theKey,           // Record's key.
-                    theData,          // Record's data.
-                    Put.OVERWRITE,    // If the record exists,
-                    // overwrite it.
-                    wo);              // WriteOptions instance.
+                WriteOptions wo = new WriteOptions();
+                // This sets the TTL using day units. Another variation
+                // of setTTL() exists that accepts a TimeUnit class instance.
+                wo.setTTL(5);
+                // If the record currently exists, update the TTL value
+                wo.setUpdateTTL(true);
+                postsView.getDatabaseFactory().getForumDb().put(
+                        null,             // Transaction handle.
+                        theKey,           // Record's key.
+                        theData,          // Record's data.
+                        Put.OVERWRITE,    // If the record exists,
+                        // overwrite it.
+                        wo);              // WriteOptions instance.
 
-        } catch (Exception e) {
-            // Exception handling goes here
-            e.printStackTrace();
+            } catch (Exception e) {
+                // Exception handling goes here
+                e.printStackTrace();
+            }
+        }else{
+            throw new TopicNotFounException(String.valueOf(post.getTopicId()));
         }
 
 //        try {

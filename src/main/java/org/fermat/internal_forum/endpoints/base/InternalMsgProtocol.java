@@ -14,7 +14,10 @@ public class InternalMsgProtocol {
     public static final String KEY_SIGNATURE = "sign";
     public static final String KEY_CC_VALUE = "cc_value";
 
+    public static final String KEY_MINIMUM_APP_VERSION = "version";
+
     public static final String KEY_PROFILE_NAME = "name";
+    public static final String KEY_PROFILE_TYPE = "app_type";
     public static final String KEY_PROFILE_IMG = "img";
 
 

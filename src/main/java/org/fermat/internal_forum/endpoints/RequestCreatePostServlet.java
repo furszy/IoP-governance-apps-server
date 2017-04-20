@@ -10,8 +10,11 @@ import org.fermat.KeyEd25519Java;
 import org.fermat.forum.ResponseMessageConstants;
 import org.fermat.internal_forum.db.CantSavePostException;
 import org.fermat.internal_forum.db.PostDao;
+import org.fermat.internal_forum.db.ProfilesDao;
+import org.fermat.internal_forum.db.TopicNotFounException;
 import org.fermat.internal_forum.endpoints.base.AuthEndpoint;
 import org.fermat.internal_forum.model.Post;
+import org.fermat.internal_forum.model.Profile;
 import org.fermat.internal_forum.model.Topic;
 
 import javax.servlet.ServletException;
@@ -29,12 +32,14 @@ public class RequestCreatePostServlet extends AuthEndpoint {
 
 	private static final Logger logger = Logger.getLogger(RequestCreatePostServlet.class);
 
+	protected ProfilesDao profilesDao;
 	private PostDao postDao;
 	private NotificationDispatcher notificationDispatcher;
 
 	public RequestCreatePostServlet() {
 		postDao = Context.getPostDao();
 		notificationDispatcher = Context.getNotificationDispatcher();
+		profilesDao = Context.getProfilesDao();
 	}
 
 	@Override
@@ -94,11 +99,16 @@ public class RequestCreatePostServlet extends AuthEndpoint {
 					resp.setStatus(HttpStatus.OK_200);
 
 					// notify users
-					notificationDispatcher.dispatchTopicNotification(topicId);
+					Profile profile = profilesDao.getProfile(profilePublicKey);
+					notificationDispatcher.dispatchTopicNotification(topicId,profile.getAppType());
 				} catch (CantSavePostException e) {
 					logger.error("CantSavePostException", e);
 					responseObj.addProperty(ERROR_DETAIL, "server error: " + e.getMessage());
 					resp.setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
+				} catch (TopicNotFounException e) {
+					logger.error("TopicNotFounException", e);
+					responseObj.addProperty(ResponseMessageConstants.INVALID_PARAMETER, "topic not found, id: "+e.getTopicId());
+					resp.setStatus(HttpStatus.BAD_REQUEST_400);
 				}
 			}
 		}else {

@@ -155,7 +155,7 @@ public class RequestCreateTopicServlet extends AuthEndpoint {
 			@Override
 			public void run() {
 				try {
-					Firebase.pushFCMNotificationToGroup(SuscriptionType.TOPICS.getId(),new NewTopicPushMsg(topicId,title));
+					Firebase.pushFCMNotificationToGroup(SuscriptionType.TOPICS.getId(),new NewTopicPushMsg(topicId,title), Firebase.Type.CONTRIB, Firebase.Type.VOT);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

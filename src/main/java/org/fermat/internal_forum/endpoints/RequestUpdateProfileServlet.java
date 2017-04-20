@@ -4,18 +4,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.http.HttpStatus;
-import org.fermat.ArraysUtils;
 import org.fermat.Context;
-import org.fermat.CryptoBytes;
-import org.fermat.KeyEd25519Java;
 import org.fermat.forum.ResponseMessageConstants;
 import org.fermat.internal_forum.db.CantSavePostException;
-import org.fermat.internal_forum.db.PostDao;
+import org.fermat.internal_forum.db.CantUpdateProfileException;
+import org.fermat.internal_forum.db.ProfileNotFoundException;
 import org.fermat.internal_forum.db.ProfilesDao;
-import org.fermat.internal_forum.endpoints.base.AuthEndpoint;
-import org.fermat.internal_forum.model.Post;
 import org.fermat.internal_forum.model.Profile;
-import org.fermat.push_notifications.Firebase;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -24,20 +19,21 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
 
 import static org.fermat.forum.ResponseMessageConstants.ERROR_DETAIL;
-import static org.fermat.forum.ResponseMessageConstants.POST_ID;
-import static org.fermat.internal_forum.endpoints.base.InternalMsgProtocol.*;
+import static org.fermat.internal_forum.endpoints.base.InternalMsgProtocol.KEY_PROFILE_NAME;
+import static org.fermat.internal_forum.endpoints.base.InternalMsgProtocol.KEY_PUBLIC_KEY;
 
-public class RequestRegisterProfileServlet extends HttpServlet {
+/**
+ * todo: image..
+ */
+public class RequestUpdateProfileServlet extends HttpServlet {
 
-	private static final Logger logger = Logger.getLogger(RequestRegisterProfileServlet.class);
+	private static final Logger logger = Logger.getLogger(RequestUpdateProfileServlet.class);
 
 	private ProfilesDao profilesDao;
 
-	public RequestRegisterProfileServlet() {
+	public RequestUpdateProfileServlet() {
 		profilesDao = Context.getProfilesDao();
 	}
 
@@ -54,7 +50,6 @@ public class RequestRegisterProfileServlet extends HttpServlet {
 		JsonObject responseObj = new JsonObject();
 		String name = null;
 		String profilePublicKey = null;
-		Firebase.Type type = null;
 		boolean invArg = false;
 
 		// log request ip
@@ -73,23 +68,24 @@ public class RequestRegisterProfileServlet extends HttpServlet {
 			resp.setStatus(HttpStatus.BAD_REQUEST_400);
 			invArg = true;
 		}
-		if (!jsonElement.has(KEY_PROFILE_TYPE) || ((name = jsonElement.get(KEY_PROFILE_TYPE).getAsString())!=null && name.length()==0)){
-			responseObj.addProperty(ResponseMessageConstants.INVALID_PARAMETER, "type must not be null");
-			resp.setStatus(HttpStatus.BAD_REQUEST_400);
-			invArg = true;
-		}else {
-			type = Firebase.Type.valueOf(jsonElement.get(KEY_PROFILE_TYPE).getAsString());
-		}
-
-
 		if (!invArg) {
 			try {
-				logger.info("Request register identity for pk: "+profilePublicKey);
-				profilesDao.saveProfile(new Profile(profilePublicKey,name,type));
-				resp.setStatus(HttpStatus.OK_200);
-			} catch (CantSavePostException e) {
-				logger.error("CantSavePostException", e);
+				logger.info("trying to update profile with pk: "+profilePublicKey);
+				if(profilesDao.updateProfile(profilePublicKey,name)){
+					resp.setStatus(HttpStatus.OK_200);
+				}else {
+					logger.error("Error updating profile, pk: "+profilePublicKey);
+					responseObj.addProperty(ERROR_DETAIL, "server error.. ");
+					resp.setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
+				}
+
+			} catch (ProfileNotFoundException e) {
+				logger.error("ProfileNotFoundException", e);
 				responseObj.addProperty(ERROR_DETAIL, "server error: " + e.getMessage());
+				resp.setStatus(HttpStatus.BAD_REQUEST_400);
+			} catch (CantUpdateProfileException e) {
+				logger.error("Error updating profile, pk: "+profilePublicKey,e);
+				responseObj.addProperty(ERROR_DETAIL, "server error.. ");
 				resp.setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
 			}
 		}

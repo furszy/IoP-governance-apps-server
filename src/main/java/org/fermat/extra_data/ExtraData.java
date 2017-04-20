@@ -9,9 +9,11 @@ import java.math.BigDecimal;
 public class ExtraData implements Serializable{
 
     private BigDecimal monthRateIoP;
+    private long minimumAppVersion;
 
-    public ExtraData(BigDecimal monthRateIoP) {
+    public ExtraData(BigDecimal monthRateIoP,long minimumAppVersion) {
         this.monthRateIoP = monthRateIoP;
+        this.minimumAppVersion = minimumAppVersion;
     }
 
     public BigDecimal getMonthRateIoP() {
@@ -20,6 +22,14 @@ public class ExtraData implements Serializable{
 
     public void setMonthRateIoP(BigDecimal monthRateIoP) {
         this.monthRateIoP = monthRateIoP;
+    }
+
+    public long getMinimumAppVersion() {
+        return minimumAppVersion;
+    }
+
+    public void setMinimumAppVersion(long minimumAppVersion) {
+        this.minimumAppVersion = minimumAppVersion;
     }
 
     public void saveExtraData(File file){
