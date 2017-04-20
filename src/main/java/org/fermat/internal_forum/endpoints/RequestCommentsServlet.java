@@ -7,6 +7,7 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.fermat.Context;
 import org.fermat.forum.ResponseMessageConstants;
 import org.fermat.internal_forum.db.PostDao;
+import org.fermat.internal_forum.db.ProfileNotFoundException;
 import org.fermat.internal_forum.db.ProfilesDao;
 import org.fermat.internal_forum.endpoints.base.AuthEndpoint;
 import org.fermat.internal_forum.model.Comment;
@@ -62,7 +63,12 @@ public class RequestCommentsServlet extends AuthEndpoint {
 				if (postList!=null) {
 					List<Comment> comments = new ArrayList<>();
 					for (Post post : postList) {
-						Profile profile = profilesDao.getProfile(post.getOwnerPk());
+						Profile profile = null;
+						try {
+							profile = profilesDao.getProfile(post.getOwnerPk());
+						} catch (ProfileNotFoundException e) {
+							logger.error("profile not found looking for comments, pk: "+post.getOwnerPk());
+						}
 						Comment comment = new Comment(post.getPubTime(), post.getOwnerPk(), profile.getName(), null, post.getRaw());
 						comments.add(comment);
 					}

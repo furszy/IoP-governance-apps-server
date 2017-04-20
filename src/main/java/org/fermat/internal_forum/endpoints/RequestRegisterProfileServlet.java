@@ -8,6 +8,7 @@ import org.fermat.ArraysUtils;
 import org.fermat.Context;
 import org.fermat.CryptoBytes;
 import org.fermat.KeyEd25519Java;
+import org.fermat.db.exceptions.CantSaveIdentityException;
 import org.fermat.forum.ResponseMessageConstants;
 import org.fermat.internal_forum.db.CantSavePostException;
 import org.fermat.internal_forum.db.PostDao;
@@ -73,7 +74,7 @@ public class RequestRegisterProfileServlet extends HttpServlet {
 			resp.setStatus(HttpStatus.BAD_REQUEST_400);
 			invArg = true;
 		}
-		if (!jsonElement.has(KEY_PROFILE_TYPE) || ((name = jsonElement.get(KEY_PROFILE_TYPE).getAsString())!=null && name.length()==0)){
+		if (!jsonElement.has(KEY_PROFILE_TYPE) || (jsonElement.get(KEY_PROFILE_TYPE).getAsString())==null){
 			responseObj.addProperty(ResponseMessageConstants.INVALID_PARAMETER, "type must not be null");
 			resp.setStatus(HttpStatus.BAD_REQUEST_400);
 			invArg = true;
@@ -87,8 +88,8 @@ public class RequestRegisterProfileServlet extends HttpServlet {
 				logger.info("Request register identity for pk: "+profilePublicKey);
 				profilesDao.saveProfile(new Profile(profilePublicKey,name,type));
 				resp.setStatus(HttpStatus.OK_200);
-			} catch (CantSavePostException e) {
-				logger.error("CantSavePostException", e);
+			} catch (CantSaveIdentityException e) {
+				logger.error("CantSaveIdentityException", e);
 				responseObj.addProperty(ERROR_DETAIL, "server error: " + e.getMessage());
 				resp.setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
 			}

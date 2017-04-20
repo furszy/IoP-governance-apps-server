@@ -7,11 +7,9 @@ import org.fermat.ArraysUtils;
 import org.fermat.Context;
 import org.fermat.CryptoBytes;
 import org.fermat.KeyEd25519Java;
+import org.fermat.db.exceptions.CantSaveIdentityException;
 import org.fermat.forum.ResponseMessageConstants;
-import org.fermat.internal_forum.db.CantSavePostException;
-import org.fermat.internal_forum.db.CantUpdateProfileException;
-import org.fermat.internal_forum.db.PostDao;
-import org.fermat.internal_forum.db.ProfilesDao;
+import org.fermat.internal_forum.db.*;
 import org.fermat.internal_forum.endpoints.base.AuthEndpoint;
 import org.fermat.internal_forum.model.Post;
 
@@ -84,6 +82,12 @@ public class RegisterPushIdServlet extends AuthEndpoint {
 					logger.error("CantUpdateProfileException", e);
 					responseObj.addProperty(ERROR_DETAIL, "server error: " + e.getMessage());
 					resp.setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
+				} catch (ProfileNotFoundException e) {
+					responseObj.addProperty(ResponseMessageConstants.INVALID_PARAMETER, e.getMessage());
+					resp.setStatus(HttpStatus.BAD_REQUEST_400);
+				} catch (CantSaveIdentityException e) {
+					responseObj.addProperty(ResponseMessageConstants.INVALID_PARAMETER, "cant save profile, error: "+e.getMessage());
+					resp.setStatus(HttpStatus.BAD_REQUEST_400);
 				}
 //			} else {
 //				logger.error("bad signature");

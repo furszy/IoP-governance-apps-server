@@ -7,6 +7,7 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.fermat.Context;
 import org.fermat.forum.ResponseMessageConstants;
 import org.fermat.internal_forum.db.PostDao;
+import org.fermat.internal_forum.db.ProfileNotFoundException;
 import org.fermat.internal_forum.db.ProfilesDao;
 import org.fermat.internal_forum.endpoints.base.AuthEndpoint;
 import org.fermat.internal_forum.model.Profile;
@@ -57,7 +58,11 @@ public class RequestTopicsServlet extends AuthEndpoint {
 		if (minimizaData){
 			JsonArray jsonArray = new JsonArray();
 			for (Topic topic : topicList) {
-				jsonArray.add(toMinDataJson(topic,profilesDao.getProfile(topic.getOwnerPk())));
+				try {
+					jsonArray.add(toMinDataJson(topic,profilesDao.getProfile(topic.getOwnerPk())));
+				} catch (ProfileNotFoundException e) {
+					logger.error("profile not found looking for comments, pk: "+topic.getOwnerPk());
+				}
 			}
 			json = jsonArray.toString();
 		}else {

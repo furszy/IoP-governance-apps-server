@@ -16,6 +16,7 @@ import org.fermat.internal_forum.endpoints.base.AuthEndpoint;
 import org.fermat.internal_forum.model.Post;
 import org.fermat.internal_forum.model.Profile;
 import org.fermat.internal_forum.model.Topic;
+import org.fermat.push_notifications.Firebase;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -99,8 +100,8 @@ public class RequestCreatePostServlet extends AuthEndpoint {
 					resp.setStatus(HttpStatus.OK_200);
 
 					// notify users
-					Profile profile = profilesDao.getProfile(profilePublicKey);
-					notificationDispatcher.dispatchTopicNotification(topicId,profile.getAppType());
+					//Profile profile = profilesDao.getProfile(profilePublicKey);
+					notificationDispatcher.dispatchTopicNotification(topicId, Firebase.Type.CONTRIB, Firebase.Type.VOT);
 				} catch (CantSavePostException e) {
 					logger.error("CantSavePostException", e);
 					responseObj.addProperty(ERROR_DETAIL, "server error: " + e.getMessage());

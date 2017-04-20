@@ -20,12 +20,17 @@ public class NotificationDispatcher {
         this.pushDao = pushDao;
     }
 
-    public void dispatchTopicNotification(long topicId, Firebase.Type type){
-        pushDao.getTopicPushDeviceIds(topicId).forEach(t->{
-            try {
-                Firebase.pushFCMNotification(t,topicId,type);
-            } catch (Exception e) {
-                e.printStackTrace();
+    public void dispatchTopicNotification(long topicId, Firebase.Type... types){
+        executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                pushDao.getTopicPushDeviceIds(topicId).forEach(t->{
+                    try {
+                        Firebase.pushFCMNotification(t,topicId,types);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
             }
         });
     }
