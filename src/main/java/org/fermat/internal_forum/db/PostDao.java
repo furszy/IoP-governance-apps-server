@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.fermat.internal_forum.endpoints.RequestTopicsServlet;
 import org.fermat.internal_forum.model.Post;
 import org.fermat.internal_forum.model.Topic;
+import org.omg.PortableInterceptor.SUCCESSFUL;
 
 import java.io.ObjectStreamClass;
 import java.util.*;
@@ -25,119 +26,65 @@ public class PostDao {
 
     private InternalDatabaseFactory databaseFactory;
 
-    private PostsView postsView;
-
     public PostDao(InternalDatabaseFactory databaseFactory) {
         this.databaseFactory = databaseFactory;
-        postsView = new PostsView(databaseFactory);
-    }
-
-    public Map<PostKey,Topic> getPosts(){
-        return new HashMap<>(postsView.getTopicMap());
     }
 
     public Topic getTopics(long id){
-        EntryBinding<PostKey> identityKeyBinding = new SerialBinding<>(databaseFactory.getClassCatalog(), PostKey.class);
-        EntryBinding<Topic> identityDataBinding = new SerialBinding<>(databaseFactory.getClassCatalog(),Topic.class);
-        DatabaseEntry keyDatabaseEntry = new DatabaseEntry();
-        DatabaseEntry valueDatabaseEntry = new DatabaseEntry();
-        PostKey postKey = new PostKey(id);
-        identityKeyBinding.objectToEntry(postKey,keyDatabaseEntry);
-        OperationStatus op = databaseFactory.getForumDb().get(null, keyDatabaseEntry, valueDatabaseEntry, null);
-        if (op == OperationStatus.SUCCESS) {
-            Topic topic =  identityDataBinding.entryToObject(valueDatabaseEntry);
-            logger.info("object: " +topic.toString());
-            return topic;
-        }
-        return null;
+        return getPrimaryIndex().get(id);
     }
 
 
     public List<Topic> getTopicsAfterTime(long timeInMillis,int maxAmount){
         List<Topic> topics = new ArrayList<>();
-        long i = getPostsCount();
-        EntryBinding<PostKey> identityKeyBinding = new SerialBinding<>(databaseFactory.getClassCatalog(), PostKey.class);
-        EntryBinding<Topic> identityDataBinding = new SerialBinding<>(databaseFactory.getClassCatalog(),Topic.class);
-        long postCount = i;
-        do {
-            DatabaseEntry keyDatabaseEntry = new DatabaseEntry();
-            DatabaseEntry valueDatabaseEntry = new DatabaseEntry();
-            PostKey postKey = new PostKey(i);
-            identityKeyBinding.objectToEntry(postKey,keyDatabaseEntry);
-            OperationStatus op = databaseFactory.getForumDb().get(null, keyDatabaseEntry, valueDatabaseEntry, null);
-            if (op == OperationStatus.SUCCESS) {
-                Topic topic =  identityDataBinding.entryToObject(valueDatabaseEntry);
-                if (topic.getPubTime()>timeInMillis) {
-                    topics.add(topic);
-                }
-//                logger.info("object: " +topic.toString());
+        getPrimaryIndex().entities().forEach(topic -> {
+            if (topic.getPubTime()>timeInMillis) {
+                topics.add(topic);
             }
-            i--;
-        }while (i>1 && topics.size() < maxAmount);
-
-//        Cursor cursor = databaseFactory.getForumDb().openCursor(null, null);
-//
-//        DatabaseEntry foundKey =
-//                new DatabaseEntry();
-//        DatabaseEntry foundData =
-//                new DatabaseEntry();
-//
-//        while (cursor.getNext(foundKey,
-//                foundData,
-//                LockMode.DEFAULT)
-//                == OperationStatus.SUCCESS) {
-//
-//            try {
-//                if (foundData.getSize()>1) {
-//
-//                    Topic topic = identityDataBinding.entryToObject(foundData);
-//                    logger.info("entry: " + topic.toString());
-//                }
-//            }catch (Exception e){
-//                e.printStackTrace();
-//            }
-//
-//        }
-//        cursor.close();
-//        try {
-//            for (Topic topic : getPosts().values()) {
-//                logger.info(topic.toString());
-//            }
-//        }catch (Exception e){
-//            e.printStackTrace();
-//        }
-//            StoredIterator<Topic> storedIterator = postsView.getTopicEntrySet().storedIterator();
-//            while (storedIterator.hasNext() && i < maxAmount) {
-//                try {
-//                Topic topic = storedIterator.next();
-//                if (topic.getPubTime() > timeInMillis) {
-//                    topics.add(topic);
-//                }
-//                }catch (Exception e){
-//                    e.printStackTrace();
-//                }
-//                i++;
-//            }
+        });
         return topics;
     }
 
-    public synchronized long saveTopic(Topic topic) throws CantSavePostException {
-        TransactionRunner transactionRunner = new TransactionRunner(databaseFactory.getEnvironment());
-        long id = getPostsCount();
-        topic.setId(id);
-        topic.setPubTime(System.currentTimeMillis());
+
+    public synchronized boolean updateTopic(Topic topic){
+        getPrimaryIndex().put(topic);
+        return true;
+    }
+
+    public synchronized long saveTopic(Topic topic,boolean updateIfExist) throws CantSavePostException{
         try {
-            transactionRunner.run(()->postsView.getTopicMap().put(new PostKey(topic.getId()), topic));
+            long id = getPostsCount()+1;
+            topic.setId(id);
+            topic.setPubTime(System.currentTimeMillis());
+            if (updateIfExist) {
+                updateTopic(topic);
+            } else {
+                getPrimaryIndex().putNoOverwrite(topic);
+            }
             return id;
-        } catch (Exception e) {
-            throw new CantSavePostException(e);
+        }catch (UniqueConstraintException e){
+            throw new CantSavePostException("Title already used");
         }
+
+    }
+
+    public boolean deleteTopic(long topicId) {
+        EntryBinding<PostKey> identityKeyBinding = new SerialBinding<>(databaseFactory.getClassCatalog(), PostKey.class);
+        DatabaseEntry keyDatabaseEntry = new DatabaseEntry();
+        PostKey postKey = new PostKey(topicId);
+        identityKeyBinding.objectToEntry(postKey,keyDatabaseEntry);
+        OperationStatus op = databaseFactory.getForumDb().delete(null, keyDatabaseEntry);
+        if (op == OperationStatus.SUCCESS) {
+            logger.info("topic removed: " +topicId);
+            return true;
+        }
+        return false;
     }
 
     public synchronized long savePost(Post post) throws CantSavePostException, TopicNotFounException {
         post.setPubTime(System.currentTimeMillis());
         int id = 0;
-        Topic topic = postsView.getTopic(post.getTopicId());
+        Topic topic = getTopics(post.getTopicId());
         if (topic!=null) {
             List<Post> posts = topic.getPosts();
             if (posts != null) {
@@ -145,51 +92,20 @@ public class PostDao {
             }
             post.setId(id);
             topic.addPost(post);
-            try {
-                EntryBinding<PostKey> keyBinding = new SerialBinding<>(databaseFactory.getClassCatalog(), PostKey.class);
-                EntryBinding<Topic> dataBinding = new SerialBinding<>(databaseFactory.getClassCatalog(), Topic.class);
-
-                DatabaseEntry theKey = new DatabaseEntry();
-                DatabaseEntry theData = new DatabaseEntry();
-
-                keyBinding.objectToEntry(new PostKey(topic.getId()), theKey);
-                dataBinding.objectToEntry(topic, theData);
-
-                WriteOptions wo = new WriteOptions();
-                // This sets the TTL using day units. Another variation
-                // of setTTL() exists that accepts a TimeUnit class instance.
-                wo.setTTL(5);
-                // If the record currently exists, update the TTL value
-                wo.setUpdateTTL(true);
-                postsView.getDatabaseFactory().getForumDb().put(
-                        null,             // Transaction handle.
-                        theKey,           // Record's key.
-                        theData,          // Record's data.
-                        Put.OVERWRITE,    // If the record exists,
-                        // overwrite it.
-                        wo);              // WriteOptions instance.
-
-            } catch (Exception e) {
-                // Exception handling goes here
-                e.printStackTrace();
-            }
+            updateTopic(topic);
         }else{
             throw new TopicNotFounException(String.valueOf(post.getTopicId()));
         }
-
-//        try {
-//            transactionRunner.run(() -> {
-//                topic.addPost(post);
-//            });
-//        } catch (Exception e) {
-//            throw new CantSavePostException(e);
-//        }
         return id;
     }
 
 
     public long getPostsCount() {
-        return databaseFactory.getForumDb().count();
+        return getPrimaryIndex().count();
+    }
+
+    private PrimaryIndex<Long,Topic> getPrimaryIndex(){
+        return databaseFactory.getTopicsStore().getPrimaryIndex(Long.class,Topic.class);
     }
 
     public List<Post> getCommentsForTopic(long topicId,long startTime, int maxRecordAmount) {
@@ -197,5 +113,10 @@ public class PostDao {
         if (topic!=null)
             return topic.getPosts();
         return null;
+    }
+
+
+    public void dropDatabase() {
+        databaseFactory.getTopicsStore().truncateClass(Topic.class);
     }
 }

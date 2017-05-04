@@ -37,6 +37,10 @@ public class Topic implements Serializable{
     private long ccValueInToshis;
     private long pubTime;
     private byte[] signature;
+    private int topicVersion = 0;
+
+    public Topic() {
+    }
 
     public Topic(long id, String ownerPk, String title, String subTitle, String category, String raw, int commentCount, long ccValueInToshis, long pubTime, String signature) {
         this.id = id;

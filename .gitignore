@@ -3,3 +3,4 @@ app.log*
 .gradle
 /build
 /db
+000*

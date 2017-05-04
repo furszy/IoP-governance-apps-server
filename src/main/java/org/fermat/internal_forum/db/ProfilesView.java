@@ -20,13 +20,13 @@ public class ProfilesView {
 
     public ProfilesView(InternalDatabaseFactory databaseFactory) {
 
-        this.db = databaseFactory;
-        ClassCatalog classCatalog = databaseFactory.getProfilesDbCatalog();
-
-        EntryBinding<String> identityKeyBinding = new SerialBinding<>(classCatalog, String.class);
-        EntryBinding<Profile> identityDataBinding = new SerialBinding<>(classCatalog,Profile.class);
-
-        profilesMap = new StoredSortedMap<>(databaseFactory.getProfileStore(),identityKeyBinding,identityDataBinding,true);
+//        this.db = databaseFactory;
+//        ClassCatalog classCatalog = databaseFactory.getProfilesDbCatalog();
+//
+//        EntryBinding<String> identityKeyBinding = new SerialBinding<>(classCatalog, String.class);
+//        EntryBinding<Profile> identityDataBinding = new SerialBinding<>(classCatalog,Profile.class);
+//
+//        profilesMap = new StoredSortedMap<>(databaseFactory.getProfileDb(),identityKeyBinding,identityDataBinding,true);
 
     }
 

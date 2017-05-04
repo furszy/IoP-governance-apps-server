@@ -7,7 +7,7 @@ import org.fermat.ArraysUtils;
 import org.fermat.Context;
 import org.fermat.CryptoBytes;
 import org.fermat.KeyEd25519Java;
-import org.fermat.forum.*;
+import org.fermat.forum.ResponseMessageConstants;
 import org.fermat.internal_forum.db.CantSavePostException;
 import org.fermat.internal_forum.db.PostDao;
 import org.fermat.internal_forum.endpoints.base.AuthEndpoint;
@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -28,19 +29,18 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static org.fermat.forum.ResponseMessageConstants.ERROR_DETAIL;
-import static org.fermat.forum.ResponseMessageConstants.POST_ID;
 import static org.fermat.forum.ResponseMessageConstants.TOPIC;
 import static org.fermat.internal_forum.endpoints.base.InternalMsgProtocol.*;
 
-public class RequestCreateTopicServlet extends AuthEndpoint {
+public class RequestDeleteTopicServlet extends AuthEndpoint {
 
-	private static final Logger logger = Logger.getLogger(RequestCreateTopicServlet.class);
+	private static final Logger logger = Logger.getLogger(RequestDeleteTopicServlet.class);
 
 	private ScheduledExecutorService scheduledExecutorService;
 
 	private PostDao postDao;
 
-	public RequestCreateTopicServlet() {
+	public RequestDeleteTopicServlet() {
 		postDao = Context.getPostDao();
 		scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
 	}
@@ -58,31 +58,13 @@ public class RequestCreateTopicServlet extends AuthEndpoint {
 
 		JsonObject responseObj = new JsonObject();
 
-		String title = null;
-		String subTitle = null;
-		String category = null;
-		String raw = null;
+		long topicId = -1;
 		String signature = null;
 		long ccValue = 0;
 		boolean invArg = false;
 
-		if (!msg.has(KEY_TITLE) || ((title = msg.get(KEY_TITLE).getAsString())!=null && title.length()==0)){
-			responseObj.addProperty(ResponseMessageConstants.INVALID_PARAMETER, "title must not be null");
-			resp.setStatus(HttpStatus.BAD_REQUEST_400);
-			invArg = true;
-		}
-		if (!msg.has(KEY_SUBTITLE) || ((subTitle = msg.get(KEY_SUBTITLE).getAsString())!=null && subTitle.length()==0)){
-			responseObj.addProperty(ResponseMessageConstants.INVALID_PARAMETER, "subTitle must not be null");
-			resp.setStatus(HttpStatus.BAD_REQUEST_400);
-			invArg = true;
-		}
-		if (!msg.has(KEY_CATEGORY) || ((category = msg.get(KEY_CATEGORY).getAsString())!=null && category.length()==0)){
-			responseObj.addProperty(ResponseMessageConstants.INVALID_PARAMETER, "category must not be null");
-			resp.setStatus(HttpStatus.BAD_REQUEST_400);
-			invArg = true;
-		}
-		if (!msg.has(KEY_RAW) || ((raw = msg.get(KEY_RAW).getAsString())!=null && raw.length()==0)){
-			responseObj.addProperty(ResponseMessageConstants.INVALID_PARAMETER, "raw must not be null");
+		if (!msg.has(KEY_TOPIC_ID) || ((topicId = msg.get(KEY_TOPIC_ID).getAsLong())<1)){
+			responseObj.addProperty(ResponseMessageConstants.INVALID_PARAMETER, "topic id must not be less than 1");
 			resp.setStatus(HttpStatus.BAD_REQUEST_400);
 			invArg = true;
 		}
@@ -91,42 +73,26 @@ public class RequestCreateTopicServlet extends AuthEndpoint {
 			resp.setStatus(HttpStatus.BAD_REQUEST_400);
 			invArg = true;
 		}
-		if (!msg.has(KEY_CC_VALUE) || ((ccValue = msg.get(KEY_CC_VALUE).getAsLong())<=1)){
-			responseObj.addProperty(ResponseMessageConstants.INVALID_PARAMETER, "cc value must not be null");
-			resp.setStatus(HttpStatus.BAD_REQUEST_400);
-			invArg = true;
-		}
-
-		List<String> categories = new ArrayList<>();
-		categories.add(category);
 
 		if (!invArg) {
 			byte[] signBytes = CryptoBytes.fromHexToBytes(signature);
-			if (checkSignature(title,subTitle,raw,profilePublicKey,signBytes)) {
+			if (checkSignature(topicId,profilePublicKey,signBytes)) {
 				try {
-					//todo: check if title exists..
-					Topic topic = Topic.newTopic(
-							profilePublicKey,
-							title,
-							subTitle,
-							categories,
-							raw,
-							signBytes,
-							ccValue
-					);
-					long topicId = postDao.saveTopic(
-							topic,
-							false
-					);
-					logger.info("topic saved with id: "+topicId);
-					responseObj.addProperty(TOPIC, topic.toJson());
-					resp.setStatus(HttpStatus.OK_200);
-
-					// notify users
-					pushTopicCreation(topicId,topic.getTitle());
-
-				} catch (CantSavePostException e) {
-					logger.error("CantSavePostException", e);
+					Topic topic = postDao.getTopics(topicId);
+					if (topic.getOwnerPk()==profilePublicKey) {
+						if (postDao.deleteTopic(topicId)) {
+							logger.info("topic removed with id: " + topicId);
+							resp.setStatus(HttpStatus.OK_200);
+						} else {
+							responseObj.addProperty(ResponseMessageConstants.INVALID_PARAMETER, "topic not found, with id: " + topicId);
+							resp.setStatus(HttpStatus.BAD_REQUEST_400);
+						}
+					}else {
+						responseObj.addProperty(ResponseMessageConstants.INVALID_PARAMETER, "profile key is not the owner of the topic");
+						resp.setStatus(HttpStatus.BAD_REQUEST_400);
+					}
+				} catch (Exception e) {
+					logger.error("CantDeleteTopic", e);
 					responseObj.addProperty(ERROR_DETAIL, "server error: " + e.getMessage());
 					resp.setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
 				}
@@ -136,21 +102,14 @@ public class RequestCreateTopicServlet extends AuthEndpoint {
 				resp.setStatus(HttpStatus.BAD_REQUEST_400);
 			}
 		}else{
-			logger.info("Create topic invalid arguments, json respond: "+responseObj.toString());
+			logger.info("Delete topic invalid arguments, json respond: "+responseObj.toString());
 		}
 		return responseObj;
 	}
 
-	private boolean checkSignature(String title,String subtitle,String raw,String publicKey,byte[] signature){
-		try {
-			byte[] titleBytes = title.getBytes("UTF-8");
-			byte[] subtitleBytes = subtitle.getBytes("UTF-8");
-			byte[] rawBytes = raw.getBytes("UTF-8");
-			return KeyEd25519Java.verifyMsg(signature, ArraysUtils.concatenateByteArrays(titleBytes,subtitleBytes,rawBytes),CryptoBytes.fromHexToBytes(publicKey));
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-			return false;
-		}
+	private boolean checkSignature(long topicId,String publicKey,byte[] signature){
+		ByteBuffer byteBuffer = ByteBuffer.allocate(8).putLong(topicId);
+		return KeyEd25519Java.verifyMsg(signature, byteBuffer.array(),CryptoBytes.fromHexToBytes(publicKey));
 	}
 
 	private void pushTopicCreation(long topicId,String title){
@@ -160,10 +119,7 @@ public class RequestCreateTopicServlet extends AuthEndpoint {
 				try {
 					Firebase.pushFCMNotificationToGroup(SuscriptionType.TOPICS.getId(),new NewTopicPushMsg(topicId,title), Firebase.Type.CONTRIB, Firebase.Type.VOT);
 				} catch (IOException e) {
-					logger.error("pushTopicCreation: "+e.getMessage());
 					e.printStackTrace();
-				} catch (Exception e){
-					logger.error("pushTopicCreation: "+e.getMessage());
 				}
 			}
 		},5, TimeUnit.SECONDS);

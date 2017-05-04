@@ -3,15 +3,18 @@ package org.fermat.internal_forum.db;
 import com.sleepycat.bind.EntryBinding;
 import com.sleepycat.bind.serial.SerialBinding;
 import com.sleepycat.collections.TransactionRunner;
-import com.sleepycat.je.DatabaseEntry;
-import com.sleepycat.je.OperationStatus;
-import com.sleepycat.je.Put;
-import com.sleepycat.je.WriteOptions;
+import com.sleepycat.je.*;
+import com.sleepycat.persist.EntityStore;
+import com.sleepycat.persist.PrimaryIndex;
+import com.sleepycat.persist.StoreConfig;
+import com.sleepycat.persist.impl.Store;
 import org.fermat.db.exceptions.CantSaveIdentityException;
 import org.fermat.internal_forum.model.Profile;
 import org.fermat.internal_forum.model.Topic;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,24 +24,25 @@ public class ProfilesDao {
 
     private InternalDatabaseFactory databaseFactory;
 
-    private ProfilesView profilesView;
-
     public ProfilesDao(InternalDatabaseFactory databaseFactory) {
         this.databaseFactory = databaseFactory;
-        profilesView = new ProfilesView(databaseFactory);
     }
 
-    public Map<String,Profile> getProfiles(){
-        return new HashMap<>(profilesView.getProfilesMap());
+
+    public List<Profile> getProfiles(){
+        List<Profile> profiles = new ArrayList<>();
+        EntityStore store = databaseFactory.getProfileStore();
+        PrimaryIndex<String,Profile> pi = store.getPrimaryIndex(String.class,Profile.class);
+
+        pi.entities().forEach(profile -> {
+            profiles.add(profile);
+        });
+        return profiles;
     }
 
-//    public Profile getProfile(String pk){
-//        return profilesView.getProfile(pk);
-//    }
-
-    public synchronized void saveProfile(Profile profile) throws CantSaveIdentityException {
+    public synchronized boolean saveProfile(Profile profile) throws CantSaveIdentityException {
         try {
-            saveProfile(profile,false);
+            return saveProfile(profile,false);
         } catch (Exception e) {
             throw new CantSaveIdentityException("cant save identity",e);
         }
@@ -64,41 +68,28 @@ public class ProfilesDao {
 
     public boolean saveProfile(Profile profile,boolean updateIfExist) throws CantSaveIdentityException {
         if (profile.getPk()==null || profile.getPk().length()<10) throw new IllegalArgumentException("Invalid profile pk, pk"+profile.getPk());
-        try {
-            DatabaseEntry theKey = buildEntryRecord(profile.getPk(),String.class);
-            DatabaseEntry theData = buildEntryRecord(profile,Profile.class);
+        boolean res = false;
+        try{
+            EntityStore store = databaseFactory.getProfileStore();
+            PrimaryIndex<String,Profile> pi = store.getPrimaryIndex(String.class,Profile.class);
+            if (updateIfExist){
+                pi.put(profile);
+                res = true;
+            }else {
+                res = pi.putNoOverwrite(profile);
+            }
 
-            WriteOptions wo = new WriteOptions();
-            // This sets the TTL using day units. Another variation
-            // of setTTL() exists that accepts a TimeUnit class instance.
-            wo.setTTL(5);
-            // If the record currently exists, update the TTL value
-            wo.setUpdateTTL(true);
-            profilesView.getDatabaseFactory().getForumDb().put(
-                    null,             // Transaction handle.
-                    theKey,           // Record's key.
-                    theData,          // Record's data.
-                    (updateIfExist)?Put.OVERWRITE:Put.NO_OVERWRITE,    // If the record exists,
-                    // overwrite it.
-                    wo);              // WriteOptions instance.
-
-            return true;
-        } catch (Exception e) {
+        }catch (Exception e){
             // Exception handling goes here
             throw new CantSaveIdentityException("Cant save profile",e);
         }
+        return res;
     }
 
     public Profile getProfile(String pk) throws ProfileNotFoundException {
-        DatabaseEntry theKey = buildEntryRecord(pk,String.class);
-        DatabaseEntry valueDatabaseEntry = new DatabaseEntry();
-        OperationStatus op = databaseFactory.getForumDb().get(null, theKey, valueDatabaseEntry, null);
-        if (op == OperationStatus.SUCCESS) {
-            Profile profile =  buildFromEntryRecord(valueDatabaseEntry,Profile.class);
-            return profile;
-        }else {
-            throw new ProfileNotFoundException("profile not found, with pk "+pk);
-        }
+        EntityStore store = databaseFactory.getProfileStore();
+        PrimaryIndex<String,Profile> pi = store.getPrimaryIndex(String.class,Profile.class);
+        return pi.get(pk);
     }
 
 
@@ -117,6 +108,10 @@ public class ProfilesDao {
         }
     }
 
+    public void dropDatabase(){
+        databaseFactory.getProfileStore().truncateClass(Profile.class);
+    }
+
     private <T> DatabaseEntry buildEntryRecord(T obj,Class<T> objType){
         EntryBinding<T> keyBinding = new SerialBinding<>(databaseFactory.getClassCatalog(), objType);
         DatabaseEntry theKey = new DatabaseEntry();
@@ -128,4 +123,5 @@ public class ProfilesDao {
         EntryBinding<T> identityKeyBinding = new SerialBinding<>(databaseFactory.getClassCatalog(), clazz);
         return identityKeyBinding.entryToObject(databaseEntry);
     }
+
 }

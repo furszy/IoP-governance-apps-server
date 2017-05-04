@@ -62,7 +62,7 @@ public class Context {
     private static NotificationDispatcher notificationDispatcher;
 
 
-    public static void init() {
+    public static void init(String dbHomeDir) {
         File file = new File("");
 //        try {
 //            DatabaseFactory databaseFactory = new DatabaseFactory(file.getAbsolutePath());
@@ -72,7 +72,7 @@ public class Context {
 //        }
 
         try{
-            file = new File("db/");
+            file = new File(dbHomeDir);
             if (!file.exists()){
                 file.mkdirs();
             }
@@ -84,7 +84,7 @@ public class Context {
         }
 
         try {
-            file = new File("db/push/");
+            file = new File(dbHomeDir+"push/");
             if (!file.exists()){
                 file.mkdirs();
             }

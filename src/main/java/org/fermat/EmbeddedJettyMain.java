@@ -40,7 +40,7 @@ public class EmbeddedJettyMain {
 		ServerConf serverConf = new ServerConf();
 		serverConf.configLogger();
 
-		Context.init();
+		Context.init("db/");
 
 		// creates a custom logger and log messages
 		Logger logger = Logger.getLogger(EmbeddedJettyMain.class);
@@ -58,7 +58,7 @@ public class EmbeddedJettyMain {
 				port = Integer.parseInt(args[i+1]);
 			}
 
-			if (args[i].equals("-datadir")){
+			if (args[i].equals("-//")){
 				iopDir = args[i+1];
 			}
 
@@ -85,12 +85,12 @@ public class EmbeddedJettyMain {
 			Context.setIopCoreDir(iopDir);
 		}
 
-		try{
-			URL url = new URL(Context.getForumUrl());
-		}catch (Exception e){
-			logger.error("bad url forum, "+Context.getForumUrl());
-			System.exit(1);
-		}
+//		try{
+//			URL url = new URL(Context.getForumUrl());
+//		}catch (Exception e){
+//			logger.error("bad url forum, "+Context.getForumUrl());
+//			System.exit(1);
+//		}
 
 		ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
 		executor.scheduleAtFixedRate(new Runnable() {
@@ -145,6 +145,8 @@ public class EmbeddedJettyMain {
 		handler.addServlet(RegisterPushIdServlet.class,"/reg_id");
 		handler.addServlet(SubscribePushTopicServlet.class,"/subcribe");
 		handler.addServlet(RequestUpdateProfileServlet.class,"/profile_update");
+		handler.addServlet(RequestDeleteTopicServlet.class,"/del_topic");
+		handler.addServlet(RequestProfilesServlet.class,"/profiles");
 
 		server.start();
 

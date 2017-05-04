@@ -45,20 +45,26 @@ public abstract class AuthEndpoint extends HttpServlet {
     protected final void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // log request ip
         logIp(req);
-        // parse request
-        JsonObject jsonElement = parseRequest(req);
         JsonObject responseObj = new JsonObject();
-        if (jsonElement.has(KEY_PUBLIC_KEY)) {
-            String profilePublicKey = jsonElement.get(KEY_PUBLIC_KEY).getAsString();
-            if (profilesDao.containsProfile(profilePublicKey)){
-                responseObj = doPost(req,resp,profilePublicKey,jsonElement);
-            }else {
-                responseObj.addProperty(ResponseMessageConstants.AUTH_FAIL, "profile public key not registered in server");
+        try {
+            // parse request
+            JsonObject jsonElement = parseRequest(req);
+            if (jsonElement.has(KEY_PUBLIC_KEY)) {
+                String profilePublicKey = jsonElement.get(KEY_PUBLIC_KEY).getAsString();
+                if (profilesDao.containsProfile(profilePublicKey)) {
+                    responseObj = doPost(req, resp, profilePublicKey, jsonElement);
+                } else {
+                    responseObj.addProperty(ResponseMessageConstants.AUTH_FAIL, "profile public key not registered in server");
+                    resp.setStatus(HttpStatus.FORBIDDEN_403);
+                }
+            } else {
+                responseObj.addProperty(ResponseMessageConstants.AUTH_FAIL, "profile public key not found in the post data");
                 resp.setStatus(HttpStatus.FORBIDDEN_403);
             }
-        }else {
-            responseObj.addProperty(ResponseMessageConstants.AUTH_FAIL, "profile public key not found in the post data");
-            resp.setStatus(HttpStatus.FORBIDDEN_403);
+        }catch (Exception e){
+            logger.info("Something occur, "+e.getMessage());
+            responseObj.addProperty(ResponseMessageConstants.ERROR_DETAIL,"Request error");
+            resp.setStatus(HttpStatus.BAD_REQUEST_400);
         }
         PrintWriter pWriter = resp.getWriter();
         pWriter.println(responseObj.toString());

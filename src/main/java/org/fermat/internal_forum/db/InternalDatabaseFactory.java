@@ -11,6 +11,7 @@ import com.sleepycat.persist.StoreConfig;
 import com.sleepycat.persist.impl.Store;
 import com.sleepycat.persist.model.EntityModel;
 import org.apache.log4j.Logger;
+import org.fermat.internal_forum.model.Profile;
 import org.fermat.internal_forum.model.Topic;
 
 import java.io.*;
@@ -47,7 +48,10 @@ public class InternalDatabaseFactory {
 
     // databases
     private Database forumDb;
-    private Database profilesDb;
+//    private Database profilesDb;
+
+    private EntityStore topicsStore;
+    private EntityStore profilesStore;
 
 
 
@@ -67,74 +71,32 @@ public class InternalDatabaseFactory {
         dbConfig.setTransactional(true);
         dbConfig.setAllowCreate(true);
 
-        forumDb = env.openDatabase(null, FORUM_STORE, dbConfig);
-        profilesDb = env.openDatabase(null,PROFILE_STORE,dbConfig);
+//        forumDb = env.openDatabase(null, FORUM_STORE, dbConfig);
+        //profilesDb = env.openDatabase(null,PROFILE_STORE,dbConfig);
 
-        javaCatalog = new StoredClassCatalog(forumDb);
-        profilesDbCatalog = new StoredClassCatalog(profilesDb);
+//        javaCatalog = new StoredClassCatalog(forumDb);
+//        profilesDbCatalog = new StoredClassCatalog(profilesDb);
 
+        StoreConfig storeConfig = new StoreConfig();
+        storeConfig.setReadOnly(false);
+        storeConfig.setTransactional(true);
+        storeConfig.setAllowCreate(true);
+        profilesStore = new EntityStore(env,PROFILE_STORE,storeConfig);
 
-//        try {
-//            EntryBinding<PostKey> identityKeyBinding = new SerialBinding<>(javaCatalog, PostKey.class);
-//            EntryBinding<Topic> identityDataBinding = new SerialBinding<>(javaCatalog, Topic.class);
-//
-//
-//            PostKey postKey = new PostKey(2);
-//            Topic topic = new Topic("rqw dsadaa", "titusada lo", "dwadwa", new ArrayList<>(), "raw2", null);
-//            topic.setId(2);
-//
-//            DatabaseEntry keyDatabaseEntry = new DatabaseEntry();
-//            DatabaseEntry valueDatabaseEntry = new DatabaseEntry();
-//            identityKeyBinding.objectToEntry(postKey, keyDatabaseEntry);
-//            identityDataBinding.objectToEntry(topic, valueDatabaseEntry);
-//        OperationStatus operationStatus = forumDb.put(null, keyDatabaseEntry, valueDatabaseEntry);
-
-//        LOG.info("value saved: op_status -> " + operationStatus.toString());
-
-//        if (operationStatus == OperationStatus.SUCCESS) {
-//            DatabaseEntry keyDatabaseEntry2 = new DatabaseEntry();
-//            DatabaseEntry valueDatabaseEntry2 = new DatabaseEntry();
-//            OperationStatus op = forumDb.get(null, keyDatabaseEntry, valueDatabaseEntry2, null);
-//            if (op == OperationStatus.SUCCESS) {
-//                LOG.info("value retrieved: op_status -> " + op.toString());
-//                LOG.info("object: " + identityDataBinding.entryToObject(valueDatabaseEntry2).toString());
-//            }
-//        }
-//
-//            DatabaseEntry databaseEntry = new DatabaseEntry();
-//            DatabaseEntry valueDb = new DatabaseEntry();
-//            Cursor cursor = forumDb.openCursor(null, null);
-//            while (cursor.getNext(databaseEntry, valueDb, LockMode.DEFAULT) == OperationStatus.SUCCESS) {
-////            LOG.info("key: " + identityKeyBinding.entryToObject(databaseEntry).toString());
-//                try {
-//                    if (valueDb.getSize() > 1)
-//                        LOG.info("object: " + identityDataBinding.entryToObject(valueDb).toString());
-//                    else
-//                        LOG.error("fail");
-//                }catch (Exception e){
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//            cursor.close();
-
-
-
-//        storeConfig = new StoreConfig();
-//        storeConfig.setReadOnly(true);
-
-//        }catch (Exception e){
-//            e.printStackTrace();
-//        }
-
+        topicsStore = new EntityStore(env,FORUM_STORE,storeConfig);
     }
 
     public void close() throws DatabaseException {
         LOG.info("Closing db manager..");
-        forumDb.close();
-        profilesDb.close();
+        if (forumDb!=null)
+            forumDb.close();
+//        if (profilesDb!=null)
+//            profilesDb.close();
         javaCatalog.close();
-        profilesDbCatalog.close();
+        if (profilesDbCatalog!=null)
+            profilesDbCatalog.close();
+        profilesStore.close();
+        topicsStore.close();
         env.close();
     }
 
@@ -150,8 +112,15 @@ public class InternalDatabaseFactory {
         return forumDb;
     }
 
-    public final Database getProfileStore() {
-        return profilesDb;
+    public final EntityStore getProfileStore() {
+        return profilesStore;
+    }
+
+//    public final Database getProfileDb() {
+//        return profilesDb;
+//    }
+    public final EntityStore getTopicsStore(){
+        return topicsStore;
     }
 
     public ClassCatalog getProfilesDbCatalog() {

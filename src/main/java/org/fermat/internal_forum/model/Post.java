@@ -1,6 +1,9 @@
 package org.fermat.internal_forum.model;
 
 import com.google.gson.Gson;
+import com.sleepycat.persist.model.Entity;
+import com.sleepycat.persist.model.Persistent;
+import com.sleepycat.persist.model.PrimaryKey;
 import javafx.geometry.Pos;
 
 import java.io.Serializable;
@@ -9,6 +12,7 @@ import java.util.List;
 /**
  * Created by mati on 03/04/17.
  */
+@Persistent
 public class Post implements Serializable{
 
     static final long serialVersionUID = 42241553233L;
@@ -19,6 +23,9 @@ public class Post implements Serializable{
     private String raw;
     private long pubTime;
     private byte[] signature;
+
+    public Post() {
+    }
 
     public static Post newPost(long topicId, String ownerPk, String raw, byte[] signature){
         return new Post(topicId,ownerPk,raw,signature);

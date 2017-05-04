@@ -116,7 +116,8 @@ public class RequestChangeTopicServlet extends AuthEndpoint {
 							ccValue
 					);
 					long topicId = postDao.saveTopic(
-							topic
+							topic,
+							true
 					);
 					logger.info("topic saved with id: "+topicId);
 					responseObj.addProperty(TOPIC, topic.toJson());
